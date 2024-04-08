@@ -15,6 +15,12 @@ const store = createStore({
   state() {
     return {
       cart: [],
+      current_sorting:1,
+      sortings:[
+        {id:1, name:"популярности"},
+        {id:2, name:"цене"},
+        {id:3, name:"алфавиту"},
+      ],
       is_loading: false,
       search_query: "",
       catalog: {
@@ -25,19 +31,40 @@ const store = createStore({
         current_subcategory: 0,
         current_page: 1,
         has_products: true,
-        per_page: 16,
+        per_page: 20,
       },
     };
   },
   getters: {
     getCartCount(state) {
-      return state.cart.length;
+      return state.cart.reduce((acc, i) => acc + i.count, 0);
     },
     getCartPrice(state) {
-      return state.cart.reduce((acc, i) => acc + i.price, 0);
+      return state.cart.reduce((acc, i) => acc + i.price * i.count, 0);
     },
     getCartProductCount: (state) => (id) => {
-      return state.cart.filter((v) => v.id == id).length;
+      for (const item of state.cart) {
+        if (item.id === id) {
+          return item.count;
+        }
+      }
+      return 0;
+    },
+    getCategoryName: (state) => (id) => {
+      for (const category of state.catalog.categories) {
+        if (category.id === id) {
+          return category.name;
+        }
+      }
+      return "Нет категории";
+    },
+    getSubcategoryName: (state) => (id) => {
+      for (const subcategory of state.catalog.subcategories) {
+        if (subcategory.id === id) {
+          return subcategory.name;
+        }
+      }
+      return "Нет подкатегории";
     },
     getCurrentCategory(state) {
       return state.catalog.categories[state.catalog.current_category];
@@ -49,22 +76,52 @@ const store = createStore({
     },
   },
   mutations: {
-    addToCart(state, product) {
-      state.cart.push(product);
-      localStorage.setItem('cart', state.cart);
+    removeProductFromCart(state, id) {
+      let index = 0;
+      for (let item of state.cart) {
+        if (item.id === id) {
+          state.cart.splice(state.cart.indexOf(index), 1);
+          localStorage.setItem("cart", JSON.stringify(state.cart));
+          return;
+        }
+        index++;
+      }
     },
-    removeFromCart(state, id) {
-      for (const i of state.cart) {
-        if (i.id == id) {
-          state.cart.splice(state.cart.indexOf(i), 1);
-          localStorage.setItem('cart', state.cart);
-          break;
+    addToCart(state, product) {
+      for (let item of state.cart) {
+        if (item.id === product.id) {
+          item.count++;
+          localStorage.setItem("cart", JSON.stringify(state.cart));
+          return;
         }
       }
+      product.count = 1;
+      state.cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(state.cart));
+    },
+    removeFromCart(state, id) {
+      let index = 0;
+      for (let item of state.cart) {
+        if (item.id === id) {
+          if (item.count > 1) {
+            item.count--;
+            localStorage.setItem("cart", JSON.stringify(state.cart));
+            return;
+          } else {
+            state.cart.splice(state.cart.indexOf(index), 1);
+            localStorage.setItem("cart", JSON.stringify(state.cart));
+            return;
+          }
+        }
+        index++;
+      }
+    },
+    clearCart(state) {
+      state.cart = [];
+      localStorage.removeItem("cart");
     },
     incrementPage(state) {
       state.catalog.current_page++;
-      console.log(state.catalog.current_page);
     },
     resetProducts(state) {
       state.catalog.current_page = 1;
@@ -147,8 +204,8 @@ const store = createStore({
   },
 });
 
-if(localStorage.hasItem('cart')){
-  store.state.cart = JSON.parse(localStorage.getItem('cart'));
+if (localStorage.getItem("cart")) {
+  store.state.cart = JSON.parse(localStorage.getItem("cart"));
 }
 
 const app = createApp(App);

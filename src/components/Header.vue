@@ -77,16 +77,47 @@ export default {
 
   <header>
     <div
-      class="container-xxl d-flex align-items-center justify-content-between"
+      class="container-xxl flex-column d-flex"
     >
-      <RouterLink :to="{ name: 'home' }" class="header-left d-flex">
-        <div class="header-logo"></div>
-        <div class="header-left-info d-flex flex-column">
-          <div class="header-title fs-3 fw-bolder">ОС ОПТ</div>
-          <div class="header-desc fs-6">купить продукты оптом в Осетии</div>
+      <div class="d-flex align-items-center justify-content-between">
+        <RouterLink :to="{ name: 'home' }" class="header-left d-flex">
+          <div class="header-logo"></div>
+          <div class="header-left-info d-flex flex-column">
+            <div class="header-title fw-bolder">ОС ОПТ</div>
+            <div class="header-desc">продукты оптом в Осетии</div>
+          </div>
+        </RouterLink>
+        <div class="header-search col-4 ms-auto d-none d-sm-flex">
+          <input
+            type="text"
+            class="form-control"
+            :value="search_query"
+            @keydown.enter="search"
+            placeholder="Найти товар"
+            @focusin="search_active = true"
+            @focusout="search_active = false"
+            v-on:input="setSearchQuery($event.target.value)"
+          />
+          <IconSearch
+            @click="search"
+            :color="search_icon_color"
+            class="header-search-btn"
+          />
         </div>
-      </RouterLink>
-      <div class="header-search col-4 ms-auto">
+        <div class="header-right">
+          <RouterLink
+            :to="{ name: 'cart' }"
+            class="header-cart text-white d-flex"
+          >
+            <div class="header-cart-price">{{ getCartPrice }} ₽</div>
+            <div class="header-cart-line"></div>
+            <div class="header-cart-btn">
+              <IconCart></IconCart>{{ getCartCount }}
+            </div>
+          </RouterLink>
+        </div>
+      </div>
+      <div class="header-search header-search-mobile col d-flex d-sm-none me-0">
         <input
           type="text"
           class="form-control"
@@ -103,18 +134,6 @@ export default {
           class="header-search-btn"
         />
       </div>
-      <div class="header-right">
-        <RouterLink
-          :to="{ name: 'cart' }"
-          class="header-cart text-white d-flex"
-        >
-          <div class="header-cart-price">{{ getCartPrice }} ₽</div>
-          <div class="header-cart-line"></div>
-          <div class="header-cart-btn">
-            <IconCart></IconCart>{{ getCartCount }}
-          </div>
-        </RouterLink>
-      </div>
     </div>
   </header>
 </template>
@@ -122,6 +141,9 @@ export default {
 <style lang="scss">
 @import "@/assets/css/variables.scss";
 
+.header-search-mobile{
+  margin-top: 40px;
+}
 .header-search-btn {
   position: absolute;
   right: 20px;
@@ -137,8 +159,16 @@ export default {
   input {
     height: 55px !important;
     border-radius: 30px;
+    background: $body-bg;
+    z-index: 1;
     padding: 10px 50px 10px 20px !important;
   }
+  svg {
+    z-index: 1;
+  }
+}
+.header-title {
+  font-size: 28px !important;
 }
 #floating-header {
   display: flex;
@@ -146,6 +176,7 @@ export default {
   position: fixed;
   top: 40px;
   right: -600px;
+  z-index: 100;
   .form-control {
     border-color: transparent;
   }
@@ -205,10 +236,18 @@ export default {
 }
 header {
   padding: 40px 0;
-  border-bottom: 1px solid #f6f6f6;
+  border-bottom: 1px solid $ui-border-color;
   margin-bottom: 40px;
 }
 .header-desc {
   color: #7b7b7b;
+  font-size: 14px !important;
+}
+@media (max-width: 800px) {
+  #floating-header {
+    .header-search {
+      width: 200px;
+    }
+  }
 }
 </style>

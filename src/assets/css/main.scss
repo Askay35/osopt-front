@@ -1,4 +1,5 @@
 @import "reset.scss";
+@import "vue-select/dist/vue-select.css";
 
 a{
   text-decoration: none;
@@ -14,7 +15,11 @@ a{
 .text-orange{
   color:$default-bg-color;
 }
+.text-secondary{
+  color:$secondary-text-color;
+}
 body {
+  background: $body-bg;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -26,9 +31,81 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.dark-btn{
+  border-radius:20px;
+  padding: 8px 15px;
+  font-weight:bolder;
+  text-align: center;
+  cursor: pointer;
+  max-width: max-content;
+  background: $dark-bg-color;
+  color: #fff;
+  &:hover{
+    background: $default-bg-color;
+  }
+}
+.custom-select{
+  background: none;
+  border: none;
+  cursor: pointer;
+  color:$default-bg-color;
+  border-bottom: 1px dotted $default-bg-color;
+  option{
+    color:#000;
+    &:hover{
+      color:$default-bg-color;
+    }
+  }
+}
+.circle-btn{
+  width: 32px;
+  height: 32px;
+  padding: 0!important;
+  border-width: 2px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  border-style: solid;
+  background: transparent;
+}
 svg{
   display: flex;
 }
 .outline-orange{
   border: 1px solid $default-bg-color; 
+}
+
+
+.vs__actions{
+  display: none;
+}
+.v-select{
+  min-width: 165px;
+  max-width: 165px;
+}
+.vs__dropdown-option--highlight{
+  background: #fe5d1e10;
+  color:$default-bg-color;
+}
+.vs__dropdown-toggle{
+  border: 0;
+}
+.vs__selected{
+  color:$default-bg-color;
+  border: 0;
+  border-bottom: 2px dotted $default-bg-color!important;
+}
+.vs__dropdown-menu{
+  margin-top: 5px;
+  box-shadow: $default-shadow;
+  border: 0;
+}
+.vs__dropdown-option{
+  padding: 5px 10px;
+}
+.vs__selected-options{
+  flex-basis: unset;
+  flex-grow: unset;
 }

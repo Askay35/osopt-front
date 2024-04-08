@@ -16,13 +16,6 @@
             {{ count }}
           </div></OutlineOrangeBtn
         >
-
-        <OutlineOrangeBtn
-          class="catalog-product-remove"
-          v-if="count > 0"
-          @click="remFromCart"
-          ><IconMinus
-        /></OutlineOrangeBtn>
       </div>
     </div>
   </div>
@@ -44,12 +37,6 @@ export default {
     pushToCart() {
       this.addToCart(this.product);
       this.count = this.getCartProductCount()(this.product.id);
-    },
-    remFromCart() {
-      if (this.count > 0) {
-        this.removeFromCart(this.product.id);
-        this.count = this.getCartProductCount()(this.product.id);
-      }
     },
   },
   data() {
@@ -129,12 +116,6 @@ export default {
       height: 16px;
       width: 15px;
     }
-  }
-
-  .catalog-product-remove {
-    min-width: 43px;
-    justify-content: center;
-    padding: 0;
   }
 }
 .catalog-product-image {

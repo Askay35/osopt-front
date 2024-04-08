@@ -18,7 +18,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  max-width: max-content;
   &:hover{
     color:#fff;
     background: $default-bg-color;
