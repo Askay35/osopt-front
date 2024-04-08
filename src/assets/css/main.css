@@ -1,0 +1,47 @@
+.form-control:focus {
+  box-shadow: none;
+  color: #2C2C2C !important;
+  border: 1px solid #FE5F1E !important;
+}
+
+.form-control {
+  border-color: #e3e3e3;
+}
+
+a {
+  text-decoration: none;
+  color: #2C2C2C;
+}
+
+#app {
+  margin: 0 auto;
+}
+
+* {
+  transition: all 0.2s ease;
+}
+
+.text-orange {
+  color: #FE5F1E;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  color: #2C2C2C;
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+svg {
+  display: flex;
+}
+
+.outline-orange {
+  border: 1px solid #FE5F1E;
+}
