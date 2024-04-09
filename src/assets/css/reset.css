@@ -4,6 +4,14 @@
   border: 1px solid #FE5F1E !important;
 }
 
+input {
+  border-radius: 50px !important;
+}
+
+textarea {
+  border-radius: 10px !important;
+}
+
 .form-control {
   border-color: #e3e3e3;
 }

@@ -1,7 +1,7 @@
 @import "reset.scss";
 @import "vue-select/dist/vue-select.css";
 
-a{
+a {
   text-decoration: none;
   color: $default-text-color;
 }
@@ -9,14 +9,14 @@ a{
 #app {
   margin: 0 auto;
 }
-*{
+* {
   transition: all 0.2s ease;
 }
-.text-orange{
-  color:$default-bg-color;
+.text-orange {
+  color: $default-bg-color;
 }
-.text-secondary{
-  color:$secondary-text-color;
+.text-secondary {
+  color: $secondary-text-color;
 }
 body {
   background: $body-bg;
@@ -26,86 +26,104 @@ body {
   color: $default-text-color;
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
-  line-height:1.5em;
+  line-height: 1.5em;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.dark-btn{
-  border-radius:20px;
-  padding: 8px 15px;
-  font-weight:bolder;
-  text-align: center;
-  cursor: pointer;
-  max-width: max-content;
+.dark-btn {
   background: $dark-bg-color;
+  border: 0;
   color: #fff;
-  &:hover{
+  &:hover {
     background: $default-bg-color;
   }
 }
-.custom-select{
+.custom-select {
   background: none;
   border: none;
   cursor: pointer;
-  color:$default-bg-color;
+  color: $default-bg-color;
   border-bottom: 1px dotted $default-bg-color;
-  option{
-    color:#000;
-    &:hover{
-      color:$default-bg-color;
+  option {
+    color: #000;
+    &:hover {
+      color: $default-bg-color;
     }
   }
 }
-.circle-btn{
-  width: 32px;
+.circle-btn {
+  min-width: 32px;
   height: 32px;
-  padding: 0!important;
+  padding: 0 !important;
   border-width: 2px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 100%;
-  border-style: solid;
+  border-radius: 100% !important;
   background: transparent;
 }
-svg{
+
+*[class$=-btn],.button {
+  border-style: solid;
+  border-radius: 50px;
+  user-select: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: 8px 15px;
+  font-weight: bolder;
+  text-align: center;
+  cursor: pointer;
+  max-width: max-content;
+}
+svg {
   display: flex;
 }
-.outline-orange{
-  border: 1px solid $default-bg-color; 
+.big-btn {
+  padding: 15px 25px;
+}
+.outline-orange {
+  border: 1px solid $default-bg-color;
+}
+.outline-secondary {
+  border: 1px solid #d0d0d0;
+  color: #d0d0d0;
 }
 
-
-.vs__actions{
+.vs__actions {
   display: none;
+}
+
+.vs__dropdown-option--highlight {
+  background: #fe5d1e10;
+  color: $default-bg-color;
+}
+.vs__dropdown-toggle {
+  border: 1px solid #d0d0d0;
+
 }
 .v-select{
   min-width: 165px;
   max-width: 165px;
 }
-.vs__dropdown-option--highlight{
-  background: #fe5d1e10;
-  color:$default-bg-color;
-}
-.vs__dropdown-toggle{
-  border: 0;
-}
-.vs__selected{
-  color:$default-bg-color;
-  border: 0;
-  border-bottom: 2px dotted $default-bg-color!important;
-}
-.vs__dropdown-menu{
-  margin-top: 5px;
-  box-shadow: $default-shadow;
-  border: 0;
-}
-.vs__dropdown-option{
-  padding: 5px 10px;
-}
-.vs__selected-options{
-  flex-basis: unset;
-  flex-grow: unset;
+.v-select.catalog-sorting-select {
+  .vs__dropdown-toggle {
+    border: 0;
+  }
+  .vs__selected {
+    color: $default-bg-color;
+    border: 0;
+    border-bottom: 2px dotted $default-bg-color !important;
+  }
+  .vs__dropdown-menu {
+    margin-top: 5px;
+    box-shadow: $default-shadow;
+    border: 0;
+  }
+  .vs__dropdown-option {
+    padding: 5px 10px;
+  }
+  .vs__selected-options {
+    flex-basis: unset;
+    flex-grow: unset;
+  }
+  
 }

@@ -126,7 +126,7 @@ export default {
         class="ms-auto user-select-none catalog-sorting d-flex align-items-center fw-bolder"
       >
         Сортировать по:
-        <VueSelect v-model="sorting" :autocomplete="false" :reduce="(option) => option.id" :options="sortings" label="name" class="ms-2"></VueSelect>
+        <VueSelect v-model="sorting" :autocomplete="false" :reduce="(option) => option.id" :options="sortings" label="name" class="catalog-sorting-select ms-2"></VueSelect>
       </div>
     </div>
     <div class="catalog-products d-flex" :class="catalogClassList">

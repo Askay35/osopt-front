@@ -15,6 +15,12 @@ const store = createStore({
   state() {
     return {
       cart: [],
+      order:{
+        phone:"",
+        message:"",
+        current_pay_type:"Наличные",
+        pay_types:["Наличные","Перевод с карты", "Другое"]
+      },
       current_sorting:1,
       sortings:[
         {id:1, name:"популярности"},
@@ -80,7 +86,7 @@ const store = createStore({
       let index = 0;
       for (let item of state.cart) {
         if (item.id === id) {
-          state.cart.splice(state.cart.indexOf(index), 1);
+          state.cart.splice(index, 1);
           localStorage.setItem("cart", JSON.stringify(state.cart));
           return;
         }
@@ -108,7 +114,7 @@ const store = createStore({
             localStorage.setItem("cart", JSON.stringify(state.cart));
             return;
           } else {
-            state.cart.splice(state.cart.indexOf(index), 1);
+            state.cart.splice(index, 1);
             localStorage.setItem("cart", JSON.stringify(state.cart));
             return;
           }
@@ -175,6 +181,28 @@ const store = createStore({
     loadCatalog() {
       this.dispatch("loadCategories");
       this.dispatch("loadSubcategories");
+    },
+    createOrder(){
+      let order_data = {
+          phone: store.state.order.phone,
+          payment_type: store.state.order.current_pay_type,
+          products: store.state.cart
+      };
+      if(store.state.order.message){
+        order_data.message = store.state.order.message;
+      }
+      window.axios
+        .post("orders", order_data)
+        .then(function (response) {
+          if (response.data.status) {
+            store.state.cart=[];
+            localStorage.removeItem("cart");
+            alert("Заказ совершен");
+          }
+          else{
+            alert("Не удалось совершить заказ")
+          }
+        });
     },
     loadMoreProducts(state, per_page = -1) {
       let pp = per_page != -1 ? per_page : store.state.catalog.per_page;

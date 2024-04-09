@@ -1,0 +1,18 @@
+<template>
+  <div class="big-btn button orange-btn">
+    <slot></slot>
+  </div>
+</template>
+
+<style lang="scss">
+@import "@/assets/css/variables.scss";
+
+.orange-btn{
+  color:#fff;
+  background:$default-bg-color;
+  border: 0;
+  &:hover {
+    background: #e85318;
+  }
+}
+</style>

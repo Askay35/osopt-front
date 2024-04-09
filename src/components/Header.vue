@@ -64,14 +64,14 @@ export default {
       <IconSearch
         @click="search"
         :color="floating_search_icon_color"
-        class="header-search-btn"
+        class="header-search__btn"
       />
     </div>
 
     <RouterLink :to="{ name: 'cart' }" class="header-cart text-white d-flex">
       <div class="header-cart-price">{{ getCartPrice }} ₽</div>
       <div class="header-cart-line"></div>
-      <div class="header-cart-btn"><IconCart></IconCart>{{ getCartCount }}</div>
+      <div class="header-cart__btn"><IconCart></IconCart>{{ getCartCount }}</div>
     </RouterLink>
   </div>
 
@@ -101,7 +101,7 @@ export default {
           <IconSearch
             @click="search"
             :color="search_icon_color"
-            class="header-search-btn"
+            class="header-search__btn"
           />
         </div>
         <div class="header-right">
@@ -111,7 +111,7 @@ export default {
           >
             <div class="header-cart-price">{{ getCartPrice }} ₽</div>
             <div class="header-cart-line"></div>
-            <div class="header-cart-btn">
+            <div class="header-cart__btn">
               <IconCart></IconCart>{{ getCartCount }}
             </div>
           </RouterLink>
@@ -131,7 +131,7 @@ export default {
         <IconSearch
           @click="search"
           :color="search_icon_color"
-          class="header-search-btn"
+          class="header-search__btn"
         />
       </div>
     </div>
@@ -144,7 +144,7 @@ export default {
 .header-search-mobile{
   margin-top: 40px;
 }
-.header-search-btn {
+.header-search__btn {
   position: absolute;
   right: 20px;
   top: 50%;
@@ -207,7 +207,7 @@ export default {
   margin: 0 12px;
   background: #ffffff75;
 }
-.header-cart-btn {
+.header-cart__btn {
   display: flex;
   gap: 6px;
 }

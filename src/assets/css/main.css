@@ -5,6 +5,14 @@
   border: 1px solid #FE5F1E !important;
 }
 
+input {
+  border-radius: 50px !important;
+}
+
+textarea {
+  border-radius: 10px !important;
+}
+
 .form-control {
   border-color: #e3e3e3;
 }
@@ -45,14 +53,8 @@ body {
 }
 
 .dark-btn {
-  border-radius: 20px;
-  padding: 8px 15px;
-  font-weight: bolder;
-  text-align: center;
-  cursor: pointer;
-  max-width: -moz-max-content;
-  max-width: max-content;
   background: #282828;
+  border: 0;
   color: #fff;
 }
 .dark-btn:hover {
@@ -74,34 +76,50 @@ body {
 }
 
 .circle-btn {
-  width: 32px;
+  min-width: 32px;
   height: 32px;
   padding: 0 !important;
   border-width: 2px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 100%;
-  border-style: solid;
+  border-radius: 100% !important;
   background: transparent;
+}
+
+*[class$=-btn], .button {
+  border-style: solid;
+  border-radius: 50px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: 8px 15px;
+  font-weight: bolder;
+  text-align: center;
+  cursor: pointer;
+  max-width: -moz-max-content;
+  max-width: max-content;
 }
 
 svg {
   display: flex;
 }
 
+.big-btn {
+  padding: 15px 25px;
+}
+
 .outline-orange {
   border: 1px solid #FE5F1E;
 }
 
-.vs__actions {
-  display: none;
+.outline-secondary {
+  border: 1px solid #d0d0d0;
+  color: #d0d0d0;
 }
 
-.v-select {
-  min-width: 165px;
-  max-width: 165px;
+.vs__actions {
+  display: none;
 }
 
 .vs__dropdown-option--highlight {
@@ -110,26 +128,31 @@ svg {
 }
 
 .vs__dropdown-toggle {
-  border: 0;
+  border: 1px solid #d0d0d0;
 }
 
-.vs__selected {
+.v-select {
+  min-width: 165px;
+  max-width: 165px;
+}
+
+.v-select.catalog-sorting-select .vs__dropdown-toggle {
+  border: 0;
+}
+.v-select.catalog-sorting-select .vs__selected {
   color: #FE5F1E;
   border: 0;
   border-bottom: 2px dotted #FE5F1E !important;
 }
-
-.vs__dropdown-menu {
+.v-select.catalog-sorting-select .vs__dropdown-menu {
   margin-top: 5px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   border: 0;
 }
-
-.vs__dropdown-option {
+.v-select.catalog-sorting-select .vs__dropdown-option {
   padding: 5px 10px;
 }
-
-.vs__selected-options {
+.v-select.catalog-sorting-select .vs__selected-options {
   flex-basis: unset;
   flex-grow: unset;
 }
