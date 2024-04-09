@@ -101,8 +101,8 @@ svg {
 
 }
 .v-select{
-  min-width: 165px;
-  max-width: 165px;
+  min-width: 220px;
+  max-width: 220px;
 }
 .v-select.catalog-sorting-select {
   .vs__dropdown-toggle {
@@ -121,9 +121,4 @@ svg {
   .vs__dropdown-option {
     padding: 5px 10px;
   }
-  .vs__selected-options {
-    flex-basis: unset;
-    flex-grow: unset;
-  }
-  
 }

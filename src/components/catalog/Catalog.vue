@@ -29,9 +29,14 @@ export default {
     ...mapState(["catalog","current_sorting", "sortings"]),
     ...mapGetters(["getCurrentCategory", "getCurrentSubcategories"]),
   },
+  watch:{
+    sorting(nv, ov){
+      this.selectSorting(nv);
+    }
+  },
   methods: {
     ...mapActions(["loadCatalog", "loadMoreProducts"]),
-    ...mapMutations(["selectSubcategory", "selectCategory"]),
+    ...mapMutations(["selectSorting","selectSubcategory", "selectCategory"]),
     isScrolledToBottomHalf() {
       var scrollTop =
         window.pageYOffset !== undefined
@@ -56,7 +61,7 @@ export default {
       return scrollTop > (documentHeight - windowHeight) * 0.75;
     },
     scrollHandler() {
-      if (this.isScrolledToBottomHalf()) {
+      if (this.isScrolledToBottomHalf() && this.$store.state.catalog.has_products) {
         this.loadMoreProducts();
       }
     },
@@ -64,7 +69,10 @@ export default {
   created() {
     this.$store.commit("resetProducts");
     this.loadCatalog();
-    this.loadMoreProducts(50);
+    this.$store.state.is_loading = true;
+    this.loadMoreProducts(50).finally(() => {
+      this.$store.state.is_loading = false;
+    });
     this.products_load_interval = setInterval(this.scrollHandler, 1500);
   },
   unmounted() {
@@ -126,12 +134,12 @@ export default {
         class="ms-auto user-select-none catalog-sorting d-flex align-items-center fw-bolder"
       >
         Сортировать по:
-        <VueSelect v-model="sorting" :autocomplete="false" :reduce="(option) => option.id" :options="sortings" label="name" class="catalog-sorting-select ms-2"></VueSelect>
+        <VueSelect v-model="sorting" autocomplete="false" :reduce="(option) => option.id" :options="sortings" label="name" class="catalog-sorting-select ms-2"></VueSelect>
       </div>
     </div>
     <div class="catalog-products d-flex" :class="catalogClassList">
       <product
-        class="px-3 mb-5"
+        class="px-4"
         v-for="(product, index) in catalog.products"
         :key="index"
         :product="product"

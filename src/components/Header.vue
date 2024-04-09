@@ -2,17 +2,20 @@
 import { RouterLink } from "vue-router";
 import IconCart from "./icons/IconCart.vue";
 import IconSearch from "./icons/IconSearch.vue";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+import IconRemove from "./icons/IconRemove.vue";
 
 export default {
   data() {
     return {
       search_active: false,
       floating_search_active: false,
+      search_suggestions: [],
     };
   },
   components: {
     IconCart,
+    IconRemove,
     IconSearch,
     RouterLink,
   },
@@ -28,10 +31,41 @@ export default {
   },
   methods: {
     ...mapMutations(["setSearchQuery"]),
+    ...mapActions(["searchProducts"]),
     search() {
-      this.$router.push({
-        name: "search",
-        params: { query: this.search_query },
+      if (this.$route.path != "/") {
+        this.$router.push("/");
+      } else {
+        this.searchProducts();
+      }
+    },
+    autocompleteSelected(v) {
+      this.search_suggestions = [];
+      this.setSearchQuery(v);
+      this.search();
+    },
+    searchFocusOut() {
+      setTimeout(() => {
+        this.search_active = false;
+      }, 300);
+    },
+    floatingSearchFocusOut() {
+      setTimeout(() => {
+        this.floating_search_active = false;
+      }, 300);
+    },
+    searchInput(v) {
+      this.setSearchQuery(v);
+      if (v.length < 2) {
+        this.search_suggestions = [];
+        return;
+      }
+      window.axios.get("products/search/autocomplete/" + v).then((response) => {
+        if (response.data.data) {
+          this.search_suggestions = response.data.data;
+        } else {
+          this.search_suggestions = [];
+        }
       });
     },
   },
@@ -53,55 +87,101 @@ export default {
     <div class="header-search col-4 ms-auto">
       <input
         type="text"
-        class="form-control"
+        class="form-control search-input"
         :value="search_query"
-        @keydown.enter="search"
         placeholder="Найти товар"
         @focusin="floating_search_active = true"
-        @focusout="floating_search_active = false"
-        v-on:input="setSearchQuery($event.target.value)"
+        @focusout="floatingSearchFocusOut"
+        @keydown.enter="search($event.target.value)"
+        @click="searchInput($event.target.value)"
+        @input="searchInput($event.target.value)"
       />
+      <div
+        class="header-autocomplete-search"
+        v-if="search_suggestions.length && floating_search_active"
+      >
+        <div
+          v-for="(item, index) in search_suggestions"
+          :key="index"
+          @click="autocompleteSelected(item.name)"
+          class="header-autocomplete-item"
+        >
+          {{ item.name }}
+        </div>
+      </div>
       <IconSearch
-        @click="search"
-        :color="floating_search_icon_color"
+        v-if="!search_query.length"
+        :color="search_icon_color"
         class="header-search__btn"
+      />
+      <IconRemove
+        v-else
+        :color="search_icon_color"
+        class="header-remove-search__btn"
+        @click="
+          setSearchQuery('');
+          search();
+        "
       />
     </div>
 
     <RouterLink :to="{ name: 'cart' }" class="header-cart text-white d-flex">
       <div class="header-cart-price">{{ getCartPrice }} ₽</div>
       <div class="header-cart-line"></div>
-      <div class="header-cart__btn"><IconCart></IconCart>{{ getCartCount }}</div>
+      <div class="header-cart__btn">
+        <IconCart></IconCart>{{ getCartCount }}
+      </div>
     </RouterLink>
   </div>
 
   <header>
-    <div
-      class="container-xxl flex-column d-flex"
-    >
+    <div class="container-xxl flex-column d-flex">
       <div class="d-flex align-items-center justify-content-between">
         <RouterLink :to="{ name: 'home' }" class="header-left d-flex">
           <div class="header-logo"></div>
           <div class="header-left-info d-flex flex-column">
             <div class="header-title fw-bolder">ОС ОПТ</div>
-            <div class="header-desc">продукты оптом в Осетии</div>
+            <div class="header-desc">продукты оптом</div>
           </div>
         </RouterLink>
         <div class="header-search col-4 ms-auto d-none d-sm-flex">
           <input
             type="text"
-            class="form-control"
+            class="form-control search-input header-search-input"
             :value="search_query"
-            @keydown.enter="search"
             placeholder="Найти товар"
             @focusin="search_active = true"
-            @focusout="search_active = false"
-            v-on:input="setSearchQuery($event.target.value)"
+            @focusout="searchFocusOut"
+            @keydown.enter="search($event.target.value)"
+            @click="searchInput($event.target.value)"
+            @input="searchInput($event.target.value)"
           />
+          <div
+            class="header-autocomplete-search"
+            v-if="search_suggestions.length && search_active"
+          >
+            <div
+              v-for="(item, index) in search_suggestions"
+              :key="index"
+              @click="autocompleteSelected(item.name)"
+              class="header-autocomplete-item"
+            >
+              {{ item.name }}
+            </div>
+          </div>
           <IconSearch
-            @click="search"
+            v-if="!search_query.length"
             :color="search_icon_color"
             class="header-search__btn"
+          />
+          <IconRemove
+            v-else
+            :color="search_icon_color"
+            class="header-remove-search__btn"
+            @click="
+              setSearchQuery('');
+              search();
+            "
           />
         </div>
         <div class="header-right">
@@ -122,16 +202,39 @@ export default {
           type="text"
           class="form-control"
           :value="search_query"
-          @keydown.enter="search"
           placeholder="Найти товар"
           @focusin="search_active = true"
-          @focusout="search_active = false"
-          v-on:input="setSearchQuery($event.target.value)"
+          @focusout="searchFocusOut"
+          @keydown.enter="search($event.target.value)"
+          @click="searchInput($event.target.value)"
+          @input="searchInput($event.target.value)"
         />
+        <div
+          class="header-autocomplete-search"
+          v-if="search_suggestions.length"
+        >
+          <div
+            v-for="(item, index) in search_suggestions"
+            :key="index"
+            @click="autocompleteSelected(item.name)"
+            class="header-autocomplete-item"
+          >
+            {{ item.name }}
+          </div>
+        </div>
         <IconSearch
-          @click="search"
+          v-if="!search_query.length"
           :color="search_icon_color"
           class="header-search__btn"
+        />
+        <IconRemove
+          v-else
+          :color="search_icon_color"
+          class="header-remove-search__btn"
+          @click="
+            setSearchQuery('');
+            search();
+          "
         />
       </div>
     </div>
@@ -141,10 +244,11 @@ export default {
 <style lang="scss">
 @import "@/assets/css/variables.scss";
 
-.header-search-mobile{
+.header-search-mobile {
   margin-top: 40px;
 }
-.header-search__btn {
+.header-search__btn,
+.header-remove-search__btn {
   position: absolute;
   right: 20px;
   top: 50%;
@@ -153,18 +257,47 @@ export default {
   height: 20px;
   transform: translateY(-50%);
 }
+.header-remove-search__btn {
+  width: 15px;
+  z-index: 10;
+  height: 15px;
+}
+.header-autocomplete-search {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 5px);
+  background: #fff;
+  border: 1px solid $ui-border-color;
+  color: $default-text-color;
+  z-index: 2;
+  overflow: hidden;
+  display: flex;
+  border-radius: 30px;
+  flex-direction: column;
+  width: 100%;
+}
+.header-autocomplete-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 50px 15px 20px !important;
+  cursor: pointer;
+  &:hover {
+    background: $light-hover-bg;
+    color: $default-bg-color;
+  }
+}
 .header-search {
   position: relative;
   margin-right: 20px;
-  input {
+  .search-input {
     height: 55px !important;
     border-radius: 30px;
-    background: $body-bg;
-    z-index: 1;
     padding: 10px 50px 10px 20px !important;
   }
-  svg {
-    z-index: 1;
+  .header-search-input {
+    position: relative;
+    background: transparent;
+    z-index: 2;
   }
 }
 .header-title {

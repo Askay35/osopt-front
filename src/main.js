@@ -15,17 +15,18 @@ const store = createStore({
   state() {
     return {
       cart: [],
-      order:{
-        phone:"",
-        message:"",
-        current_pay_type:"Наличные",
-        pay_types:["Наличные","Перевод с карты", "Другое"]
+      order: {
+        phone: "",
+        message: "",
+        current_pay_type: "Наличные",
+        pay_types: ["Наличные", "Перевод с карты", "Другое"],
       },
-      current_sorting:1,
-      sortings:[
-        {id:1, name:"популярности"},
-        {id:2, name:"цене"},
-        {id:3, name:"алфавиту"},
+      current_sorting: 1,
+      sortings: [
+        { id: 1, name: "умолчанию" },
+        { id: 2, name: "цене (сначала дешевле)" },
+        { id: 3, name: "цене (сначала дороже)" },
+        { id: 4, name: "алфавиту" },
       ],
       is_loading: false,
       search_query: "",
@@ -82,6 +83,11 @@ const store = createStore({
     },
   },
   mutations: {
+    selectSorting(state, value) {
+      state.current_sorting = value;
+      store.commit("resetProducts");
+      store.dispatch("loadMoreProducts");
+    },
     removeProductFromCart(state, id) {
       let index = 0;
       for (let item of state.cart) {
@@ -105,8 +111,11 @@ const store = createStore({
       state.cart.push(product);
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
-    removeFromCart(state, id) {
+    removeFromCart(state, { id, can_remove_all }) {
       let index = 0;
+      if (can_remove_all === undefined) {
+        can_remove_all = false;
+      }
       for (let item of state.cart) {
         if (item.id === id) {
           if (item.count > 1) {
@@ -114,9 +123,11 @@ const store = createStore({
             localStorage.setItem("cart", JSON.stringify(state.cart));
             return;
           } else {
-            state.cart.splice(index, 1);
-            localStorage.setItem("cart", JSON.stringify(state.cart));
-            return;
+            if (can_remove_all) {
+              state.cart.splice(index, 1);
+              localStorage.setItem("cart", JSON.stringify(state.cart));
+              return;
+            }
           }
         }
         index++;
@@ -182,39 +193,72 @@ const store = createStore({
       this.dispatch("loadCategories");
       this.dispatch("loadSubcategories");
     },
-    createOrder(){
+    createOrder() {
       let order_data = {
-          phone: store.state.order.phone,
-          payment_type: store.state.order.current_pay_type,
-          products: store.state.cart
+        phone: store.state.order.phone,
+        payment_type: store.state.order.current_pay_type,
+        products: store.state.cart,
       };
-      if(store.state.order.message){
+      if (store.state.order.message) {
         order_data.message = store.state.order.message;
       }
-      window.axios
-        .post("orders", order_data)
-        .then(function (response) {
-          if (response.data.status) {
-            store.state.cart=[];
-            localStorage.removeItem("cart");
-            alert("Заказ совершен");
-          }
-          else{
-            alert("Не удалось совершить заказ")
-          }
-        });
+      window.axios.post("orders", order_data).then(function (response) {
+        if (response.data.status) {
+          store.state.cart = [];
+          localStorage.removeItem("cart");
+          alert("Заказ совершен");
+        } else {
+          alert("Не удалось совершить заказ");
+        }
+      });
+    },
+    searchProducts() {
+      if (store.state.search_query) {
+        store.state.catalog.current_page = 1;
+        store.state.catalog.products = [];
+        let request_params = {
+          page: store.state.catalog.current_page,
+          per_page: store.state.catalog.per_page,
+          sorting: store.state.current_sorting,
+          category_id: store.state.catalog.current_category,
+          search: store.state.search_query,
+        };
+        if (store.state.catalog.current_subcategory != 0) {
+          request_params.subcategory_id =
+            store.state.catalog.current_subcategory;
+        }
+        store.state.is_loading = true;
+        window.axios
+          .get("products/search", {
+            params: request_params,
+          })
+          .then(function (response) {
+            if (response.data.status) {
+              store.state.catalog.products = response.data.data;
+              store.state.catalog.current_page++;
+              store.state.catalog.has_products = false;
+            }
+          })
+          .finally(() => {
+            store.state.is_loading = false;
+          });
+      } else {
+        store.commit("resetProducts");
+        store.dispatch("loadMoreProducts");
+      }
     },
     loadMoreProducts(state, per_page = -1) {
       let pp = per_page != -1 ? per_page : store.state.catalog.per_page;
       let request_params = {
         page: store.state.catalog.current_page,
         per_page: pp,
+        sorting: store.state.current_sorting,
         category_id: store.state.catalog.current_category,
       };
       if (store.state.catalog.current_subcategory != 0) {
         request_params.subcategory_id = store.state.catalog.current_subcategory;
       }
-      window.axios
+      return window.axios
         .get("products", {
           params: request_params,
         })
@@ -227,7 +271,7 @@ const store = createStore({
               store.state.catalog.current_page++;
             }
           }
-        });
+        })
     },
   },
 });

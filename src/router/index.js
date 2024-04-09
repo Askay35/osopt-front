@@ -18,11 +18,6 @@ const router = createRouter({
           name: 'cart',
           component: () => import("../pages/CartPage.vue")
         },
-        {
-          path: '/search/:query',
-          name: 'search',
-          component: () => import("../pages/SearchPage.vue")
-        },
       ]
     },
   ]

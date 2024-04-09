@@ -76,7 +76,7 @@ export default {
           <div class="cart-item-btns col-2">
             <orange-outline-btn
               class="button circle-btn"
-              @click="removeFromCart(item.id)"
+              @click="removeFromCart({id:item.id, can_remove_all:false})"
               ><icon-minus></icon-minus
             ></orange-outline-btn>
             <div class="cart-item-count">

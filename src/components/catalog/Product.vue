@@ -8,6 +8,12 @@
       <div class="catalog-product-price">{{ product.price }} ₽</div>
       <div class="catalog-product-bottom">
         <OutlineOrangeBtn
+          class="catalog-product-remove"
+          v-if="count > 0"
+          @click="remFromCart"
+          ><IconMinus
+        /></OutlineOrangeBtn>
+        <OutlineOrangeBtn
           class="catalog-product-add"
           @click="pushToCart"
           :class="{ active: count > 0 }"
@@ -38,6 +44,13 @@ export default {
       this.addToCart(this.product);
       this.count = this.getCartProductCount()(this.product.id);
     },
+    remFromCart() {
+      this.$store.commit("removeFromCart", {
+        id: this.product.id,
+        can_remove_all: true,
+      });
+      this.count = this.getCartProductCount()(this.product.id);
+    },
   },
   data() {
     return {
@@ -56,6 +69,14 @@ export default {
 <style lang="scss">
 @import "@/assets/css/variables.scss";
 
+.catalog-product-remove {
+  width: 43px;
+  padding: 0;
+  min-width: 43px;
+  svg {
+    width: 15px;
+  }
+}
 .catalog-product-btn-count {
   width: 25px;
   height: 25px;
@@ -63,10 +84,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: $default-bg-color;
+  background: #fff;
   border-radius: 20px;
 
-  color: #fff;
+  color: $default-bg-color;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -87,6 +108,34 @@ export default {
   justify-content: flex-end;
   gap: 5px;
 }
+.catalog-product-item {
+  margin-bottom: 60px;
+}
+
+.catalog-product-add {
+  width: 100%;
+  max-width: 100%;
+
+  &.active {
+    background: $default-bg-color;
+    color: #fff;
+    path {
+      fill: #fff;
+    }
+    &:hover {
+      background: $default-hover-bg;
+    }
+  }
+  svg {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: 1px;
+    height: 16px;
+    width: 15px;
+  }
+}
 .catalog-product-item-inner {
   overflow: hidden;
   height: 100%;
@@ -96,26 +145,6 @@ export default {
     height: 43px;
     justify-content: center;
     position: relative;
-    &.active:hover {
-      background: none;
-      color: $default-bg-color;
-      path {
-        fill: $default-bg-color;
-      }
-    }
-  }
-  .catalog-product-add {
-    width: 100%;
-    max-width: 100%;
-    svg {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      margin-top: 1px;
-      height: 16px;
-      width: 15px;
-    }
   }
 }
 .catalog-product-image {

@@ -12,7 +12,7 @@
   background:$default-bg-color;
   border: 0;
   &:hover {
-    background: #e85318;
+    background: $default-hover-bg;
   }
 }
 </style>
