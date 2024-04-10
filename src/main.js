@@ -102,6 +102,13 @@ const store = createStore({
         index++;
       }
     },
+    setProductCount(state,{id,count}){
+      for (let item of state.cart) {
+        if (item.id === id) {
+            item.count = Number.parseInt(count);
+        }
+      }
+    },
     addToCart(state, product) {
       for (let item of state.cart) {
         if (item.id === product.id) {

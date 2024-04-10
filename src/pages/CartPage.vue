@@ -42,6 +42,7 @@ export default {
     return {
       add_interval: null,
       sub_interval: null,
+      count_enter: false,
     };
   },
   unmounted(){
@@ -49,6 +50,15 @@ export default {
     this.subReleased();
   },
   methods: {
+    countClicked(){
+      this.count_enter=true;
+    },
+    countChanged(payload){
+      this.count_enter=false;
+      if(payload.count > 0 && payload.count < 1000){
+        this.setProductCount(payload);
+      }
+    },
     addPressed(item) {
       this.addToCart(item);
       this.add_interval = setInterval(() => {
@@ -71,6 +81,7 @@ export default {
       "removeProductFromCart",
       "clearCart",
       "removeFromCart",
+      "setProductCount",
       "addToCart",
       "selectPayType",
     ]),
@@ -120,20 +131,23 @@ export default {
                 class="button circle-btn cart-rem"
                 @mousedown="subPressed({ id: item.id, can_remove_all: false })"
                 @mouseup="subReleased"
+                @mouseleave="subReleased"
                 ><icon-minus></icon-minus
               ></orange-outline-btn>
-              <div class="cart-item-count">
+              <div @click="countClicked" v-if="!count_enter" class="cart-item-count">
                 {{ getCartProductCount(item.id) }}
               </div>
+              <input min="0" maxlength="3" v-else @change="countChanged({id:item.id,count:$event.target.value})" :value="getCartProductCount(item.id)" type="text" id="cart-item-count-inp">
               <orange-outline-btn
                 class="button circle-btn cart-add"
                 @mousedown="addPressed(item)"
                 @mouseup="addReleased"
+                @mouseleave="addReleased"
                 ><icon-plus></icon-plus
               ></orange-outline-btn>
             </div>
             <div class="cart-item-price order-2 order-md-0">
-              {{ getCartProductCount(item.id) * item.price }} ₽
+              {{ (getCartProductCount(item.id) * item.price).toFixed() }} ₽
             </div>
             <div
               @click="removeProductFromCart(item.id)"
@@ -264,12 +278,21 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-.cart-item-count {
+.cart-item-count{
   font-size: 18px;
   font-weight: 700;
 }
-.cart-item-price {
+#cart-item-count-inp {
   font-size: 18px;
+  font-weight: 700;
+  border: 0!important;
+  outline: 0!important;
+  background:none;
+  border-radius: 0!important;
+  width:33px;
+}
+.cart-item-price {
+  font-size: 20px;
   font-weight: 700;
   color: #000;
   text-align: center;
