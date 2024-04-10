@@ -14,7 +14,7 @@ textarea {
 }
 
 .form-control {
-  border-color: #e3e3e3;
+  border-color: #f0f0f0;
 }
 
 a {
@@ -106,7 +106,7 @@ svg {
 }
 
 .big-btn {
-  padding: 15px 25px;
+  padding: 20px 30px;
 }
 
 .outline-orange {
@@ -122,6 +122,10 @@ svg {
   display: none;
 }
 
+.vs__selected-options {
+  padding-left: 0;
+}
+
 .vs__dropdown-option--highlight {
   background: rgba(254, 93, 30, 0.062745098);
   color: #FE5F1E;
@@ -132,8 +136,8 @@ svg {
 }
 
 .v-select {
-  min-width: 220px;
-  max-width: 220px;
+  min-width: 210px;
+  max-width: 210px;
 }
 
 .v-select.catalog-sorting-select .vs__dropdown-toggle {
@@ -142,6 +146,7 @@ svg {
 .v-select.catalog-sorting-select .vs__selected {
   color: #FE5F1E;
   border: 0;
+  padding-left: 0;
   border-bottom: 2px dotted #FE5F1E !important;
 }
 .v-select.catalog-sorting-select .vs__dropdown-menu {

@@ -11,6 +11,12 @@ import OrangeBtn from "@/components/ui/OrangeBtn.vue";
 import VueSelect from "vue-select";
 
 export default {
+  created() {
+    this.$store.state.is_loading = true;
+  },
+  mounted() {
+    this.$store.state.is_loading = false;
+  },
   components: {
     IconCart,
     IconBucket,
@@ -32,15 +38,43 @@ export default {
       "getSubcategoryName",
     ]),
   },
+  data() {
+    return {
+      add_interval: null,
+      sub_interval: null,
+    };
+  },
+  unmounted(){
+    this.addReleased();
+    this.subReleased();
+  },
   methods: {
+    addPressed(item) {
+      this.addToCart(item);
+      this.add_interval = setInterval(() => {
+        this.addToCart(item);
+      }, 100);
+    },
+    addReleased() {
+      clearInterval(this.add_interval);
+    },
+    subPressed(payload) {
+      this.removeFromCart(payload);
+      this.sub_interval = setInterval(() => {
+        this.removeFromCart(payload);
+      }, 100);
+    },
+    subReleased() {
+      clearInterval(this.sub_interval);
+    },
     ...mapMutations([
       "removeProductFromCart",
       "clearCart",
       "removeFromCart",
       "addToCart",
-      "selectPayType"
+      "selectPayType",
     ]),
-    ...mapActions(['createOrder'])
+    ...mapActions(["createOrder"]),
   },
 };
 </script>
@@ -51,7 +85,7 @@ export default {
       <div class="row d-flex justify-content-between cart-header">
         <div class="col d-flex align-items-center">
           <IconCart color="#3F3F3F" width="30" height="30" />
-          <div class="ms-3 display-6 fw-bolder">Корзина</div>
+          <div class="ms-2 fs-3 fw-bolder">Корзина</div>
         </div>
         <div
           class="col-auto align-items-center d-flex text-secondary"
@@ -63,9 +97,14 @@ export default {
       </div>
       <div class="cart-items d-flex flex-column">
         <div v-for="(item, index) in cart" :key="index" class="cart-item">
-          <div class="cart-item-left col-6">
-            <img src="/images/flash.jpg" class="cart-item-image" />
-            <div class="cart-item-info">
+          <div
+            class="cart-item-left flex-column flex-md-row mb-5 mb-md-0 col-12 col-md-8"
+          >
+            <img
+              :src="$store.state.backend_url + item.image"
+              class="mb-4 mb-md-0 cart-item-image"
+            />
+            <div class="w-100 w-md-auto cart-item-info">
               <div class="cart-item-name">{{ item.name }}</div>
               <div class="cart-item-desc">
                 {{ getCategoryName(item.category_id) }} /
@@ -73,40 +112,46 @@ export default {
               </div>
             </div>
           </div>
-          <div class="cart-item-btns col-2">
-            <orange-outline-btn
-              class="button circle-btn"
-              @click="removeFromCart({id:item.id, can_remove_all:false})"
-              ><icon-minus></icon-minus
-            ></orange-outline-btn>
-            <div class="cart-item-count">
-              {{ getCartProductCount(item.id) }}
+          <div class="cart-item-right col-12 col-md-4">
+            <div
+              class="cart-item-btns justify-content-end justify-content-md-center order-3 order-md-0"
+            >
+              <orange-outline-btn
+                class="button circle-btn cart-rem"
+                @mousedown="subPressed({ id: item.id, can_remove_all: false })"
+                @mouseup="subReleased"
+                ><icon-minus></icon-minus
+              ></orange-outline-btn>
+              <div class="cart-item-count">
+                {{ getCartProductCount(item.id) }}
+              </div>
+              <orange-outline-btn
+                class="button circle-btn cart-add"
+                @mousedown="addPressed(item)"
+                @mouseup="addReleased"
+                ><icon-plus></icon-plus
+              ></orange-outline-btn>
             </div>
-            <orange-outline-btn
-              class="button circle-btn"
-              @click="addToCart(item)"
-              ><icon-plus></icon-plus
-            ></orange-outline-btn>
-          </div>
-          <div class="cart-item-price col-2">
-            {{ getCartProductCount(item.id) * item.price }} ₽
-          </div>
-          <div
-            @click="removeProductFromCart(item.id)"
-            class="outline-secondary cart-item-remove col-2 button circle-btn"
-          >
-            <icon-remove />
+            <div class="cart-item-price order-2 order-md-0">
+              {{ getCartProductCount(item.id) * item.price }} ₽
+            </div>
+            <div
+              @click="removeProductFromCart(item.id)"
+              class="outline-secondary cart-item-remove me-0 me-md-3 order-1 order-md-0 button circle-btn"
+            >
+              <icon-remove />
+            </div>
           </div>
         </div>
       </div>
       <div class="row mt-4 d-flex justify-content-between">
         <div class="col d-flex align-items-center">
-          <div class="fs-5">
+          <div class="cart-bottom-info">
             Всего товаров: <span class="fw-bolder">{{ getCartCount }} шт.</span>
           </div>
         </div>
         <div class="col-auto align-items-center">
-          <div class="fs-5">
+          <div class="cart-bottom-info">
             Сумма заказа:
             <span class="text-orange fw-bolder">{{ getCartPrice }} ₽</span>
           </div>
@@ -126,7 +171,7 @@ export default {
       </div>
     </template>
     <template v-else>
-      <div class="m-auto cart-empty text-center">
+      <div class="m-auto cart-empty text-center mt-4">
         <div class="display-6 fw-bold mb-2">Корзина пуста</div>
         <div class="text-secondary mb-5">
           Вероятнее всего, Вы ещё не добавили товары в корзину. <br />
@@ -152,25 +197,39 @@ export default {
                 <label for="phone" class="col-form-label"
                   >Телефон (или другой контакт):</label
                 >
-                <input type="text" v-model="order.phone" required class="form-control" id="phone" />
+                <input
+                  type="text"
+                  v-model="order.phone"
+                  required
+                  class="form-control"
+                  id="phone"
+                />
               </div>
               <div class="mb-3">
                 <label for="message-text" class="col-form-label"
                   >Сообщение (не обязательно):</label
                 >
-                <textarea v-model="order.message" maxlength="300" class="form-control" id="message-text"></textarea>
+                <textarea
+                  v-model="order.message"
+                  maxlength="300"
+                  class="form-control"
+                  id="message-text"
+                ></textarea>
               </div>
-              <label class="col-form-label"
-                  >Тип оплаты:</label
-                >
+              <label class="col-form-label">Тип оплаты:</label>
               <VueSelect
                 v-model="order.current_pay_type"
-                :autocomplete="false"
+                autocomplete="false"
                 :options="order.pay_types"
                 class="mb-3"
               ></VueSelect>
             </div>
-            <OrangeBtn @click="createOrder" data-bs-dismiss="modal" class="ms-auto mt-4 px-5">Заказать</OrangeBtn>
+            <OrangeBtn
+              @click="createOrder"
+              data-bs-dismiss="modal"
+              class="ms-auto mt-4 px-5"
+              >Заказать</OrangeBtn
+            >
           </div>
         </div>
       </div>
@@ -181,9 +240,16 @@ export default {
 <style lang="scss">
 @import "@/assets/css/variables.scss";
 
+.cart-item-right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .cart-item-image {
   height: 100%;
   object-fit: cover;
+  width: 150px;
+  border-radius: 10px;
 }
 .cart-item-name {
   font-weight: 600;
@@ -191,7 +257,7 @@ export default {
 }
 .cart-item-desc {
   font-size: 16px;
-  color: $secondary-text-color;
+  color: #ff672bf2;
 }
 .cart-empty {
   display: flex;
@@ -230,17 +296,21 @@ export default {
   flex-direction: column;
   gap: 10px;
 }
+.cart-bottom-info {
+  font-size: 1.25rem;
+}
 .cart-item {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  height: 140px;
   padding: 30px 0;
   border-top: 1px solid $ui-border-color;
 }
 .cart-items {
   max-height: 400px;
   overflow-y: scroll;
+  border-bottom: 1px solid $ui-border-color;
 }
 .cart-item-left {
   display: flex;
@@ -250,5 +320,13 @@ export default {
 }
 .cart-header {
   padding-bottom: 30px;
+}
+@media (max-width: 768px) {
+  .cart-item-image{
+    width: 250px;
+  }
+  .cart-bottom-info {
+    font-size: 1rem;
+  }
 }
 </style>

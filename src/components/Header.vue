@@ -35,9 +35,8 @@ export default {
     search() {
       if (this.$route.path != "/") {
         this.$router.push("/");
-      } else {
-        this.searchProducts();
       }
+      this.searchProducts();
     },
     autocompleteSelected(v) {
       this.search_suggestions = [];
@@ -352,8 +351,8 @@ export default {
   position: absolute;
   left: 7px;
   width: 93px;
-  height: 80px;
-  top: -30%;
+  height: 78px;
+  top: -26%;
   z-index: 1;
   border: 3px solid #fe5f1e;
   border-radius: 10px;
@@ -368,9 +367,9 @@ export default {
   padding: 5px 0;
 }
 header {
-  padding: 40px 0;
+  padding: 40px 0 30px;
   border-bottom: 1px solid $ui-border-color;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 .header-desc {
   color: #7b7b7b;

@@ -78,7 +78,7 @@ svg {
   display: flex;
 }
 .big-btn {
-  padding: 15px 25px;
+  padding: 20px 30px;
 }
 .outline-orange {
   border: 1px solid $default-bg-color;
@@ -92,6 +92,9 @@ svg {
   display: none;
 }
 
+.vs__selected-options {
+  padding-left: 0;
+}
 .vs__dropdown-option--highlight {
   background: #fe5d1e10;
   color: $default-bg-color;
@@ -101,8 +104,8 @@ svg {
 
 }
 .v-select{
-  min-width: 220px;
-  max-width: 220px;
+  min-width: 210px;
+  max-width: 210px;
 }
 .v-select.catalog-sorting-select {
   .vs__dropdown-toggle {
@@ -111,6 +114,7 @@ svg {
   .vs__selected {
     color: $default-bg-color;
     border: 0;
+    padding-left: 0;
     border-bottom: 2px dotted $default-bg-color !important;
   }
   .vs__dropdown-menu {

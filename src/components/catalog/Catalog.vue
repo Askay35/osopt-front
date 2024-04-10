@@ -1,7 +1,7 @@
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import Product from "./Product.vue";
-import VueSelect from 'vue-select';
+import VueSelect from "vue-select";
 
 export default {
   components: { Product, VueSelect },
@@ -9,7 +9,9 @@ export default {
     return {
       products_load_interval: null,
       row_items: 5,
-      sorting:1
+      sorting: 1,
+      add_interval: null,
+      sub_interval: null,
     };
   },
   computed: {
@@ -26,17 +28,44 @@ export default {
         this.row_items
       );
     },
-    ...mapState(["catalog","current_sorting", "sortings"]),
+    ...mapState(["catalog", "current_sorting", "sortings"]),
     ...mapGetters(["getCurrentCategory", "getCurrentSubcategories"]),
   },
-  watch:{
-    sorting(nv, ov){
+  watch: {
+    sorting(nv, ov) {
       this.selectSorting(nv);
-    }
+    },
   },
   methods: {
+    addPressed(item) {
+      this.addToCart(item);
+      this.add_interval = setInterval(() => {
+        this.addToCart(item);
+      }, 100);
+    },
+    addReleased() {
+      clearInterval(this.add_interval);
+    },
+    subPressed(payload) {
+      this.removeFromCart(payload);
+      if(this.sub_interval==null){
+        this.sub_interval = setInterval(() => {
+        this.removeFromCart(payload);
+      }, 100);
+      }
+    },
+    subReleased() {
+      clearInterval(this.sub_interval);
+    },
+
     ...mapActions(["loadCatalog", "loadMoreProducts"]),
-    ...mapMutations(["selectSorting","selectSubcategory", "selectCategory"]),
+    ...mapMutations([
+      "removeFromCart",
+      "addToCart",
+      "selectSorting",
+      "selectSubcategory",
+      "selectCategory",
+    ]),
     isScrolledToBottomHalf() {
       var scrollTop =
         window.pageYOffset !== undefined
@@ -61,21 +90,30 @@ export default {
       return scrollTop > (documentHeight - windowHeight) * 0.75;
     },
     scrollHandler() {
-      if (this.isScrolledToBottomHalf() && this.$store.state.catalog.has_products) {
+      if (
+        this.isScrolledToBottomHalf() &&
+        this.$store.state.catalog.has_products
+      ) {
         this.loadMoreProducts();
       }
     },
   },
   created() {
-    this.$store.commit("resetProducts");
-    this.loadCatalog();
-    this.$store.state.is_loading = true;
-    this.loadMoreProducts(50).finally(() => {
-      this.$store.state.is_loading = false;
-    });
-    this.products_load_interval = setInterval(this.scrollHandler, 1500);
+    if (!this.$store.state.categories) {
+      this.loadCatalog();
+    }
+    if (this.$store.state.catalog.has_products) {
+      this.$store.commit("resetProducts");
+      this.$store.state.is_loading = true;
+      this.loadMoreProducts(30).finally(() => {
+        this.$store.state.is_loading = false;
+      });
+      this.products_load_interval = setInterval(this.scrollHandler, 1000);
+    }
   },
   unmounted() {
+    this.addReleased();
+    this.subReleased();
     clearInterval(this.products_load_interval);
   },
 };
@@ -83,7 +121,7 @@ export default {
 
 <template>
   <div class="catalog-wrapper">
-    <div class="catalog-categories mb-4">
+    <div class="catalog-categories mb-3">
       <div
         @click="selectCategory(-1)"
         class="catalog-category"
@@ -102,7 +140,7 @@ export default {
       </div>
     </div>
     <template v-if="getCurrentSubcategories.length > 0">
-      <div class="catalog-subcategories mb-4">
+      <div class="catalog-subcategories">
         <template
           v-for="subcategory in getCurrentSubcategories"
           :key="subcategory.id"
@@ -117,8 +155,23 @@ export default {
         </template>
       </div>
     </template>
-    <div class="d-flex align-items-center">
-      <div class="catalog-view-btns">
+    <div class="d-flex align-items-center mt-3">
+      <div
+        class="user-select-none catalog-sorting d-flex flex-column flex-sm-row align-items-sm-center fw-bolder"
+      >
+        Сортировать по:
+        <VueSelect
+          v-model="sorting"
+          autocomplete="false"
+          :clearSearchOnSelect="false"
+          :searchable="false"
+          :reduce="(option) => option.id"
+          :options="sortings"
+          label="name"
+          class="catalog-sorting-select ms-0 ms-sm-2"
+        ></VueSelect>
+      </div>
+      <div class="ms-auto catalog-view-btns">
         <div
           @click="row_items = 4"
           :class="{ active: row_items == 4 }"
@@ -130,19 +183,17 @@ export default {
           class="view-five-items"
         ></div>
       </div>
-      <div
-        class="ms-auto user-select-none catalog-sorting d-flex align-items-center fw-bolder"
-      >
-        Сортировать по:
-        <VueSelect v-model="sorting" autocomplete="false" :reduce="(option) => option.id" :options="sortings" label="name" class="catalog-sorting-select ms-2"></VueSelect>
-      </div>
     </div>
     <div class="catalog-products d-flex" :class="catalogClassList">
       <product
-        class="px-4"
+        class="px-3"
         v-for="(product, index) in catalog.products"
         :key="index"
         :product="product"
+        @sub-pressed="subPressed"
+        @sub-released="subReleased"
+        @add-pressed="addPressed"
+        @add-released="addReleased"
       />
     </div>
   </div>
@@ -150,7 +201,6 @@ export default {
 
 <style lang="scss">
 @import "@/assets/css/variables.scss";
-
 
 .catalog-view-btns {
   display: flex;
@@ -181,6 +231,7 @@ export default {
 .catalog-category {
   padding: 10px 30px;
   color: $default-text-color;
+  user-select: none;
   background: #f1f1f1;
   display: flex;
   justify-content: center;

@@ -14,6 +14,7 @@ window.axios = axios_instance;
 const store = createStore({
   state() {
     return {
+      backend_url: "http://localhost:8080",
       cart: [],
       order: {
         phone: "",
@@ -47,7 +48,9 @@ const store = createStore({
       return state.cart.reduce((acc, i) => acc + i.count, 0);
     },
     getCartPrice(state) {
-      return state.cart.reduce((acc, i) => acc + i.price * i.count, 0);
+      return state.cart
+        .reduce((acc, i) => acc + i.price * i.count, 0)
+        .toFixed();
     },
     getCartProductCount: (state) => (id) => {
       for (const item of state.cart) {
@@ -214,6 +217,7 @@ const store = createStore({
     },
     searchProducts() {
       if (store.state.search_query) {
+        store.state.catalog.has_products = false;
         store.state.catalog.current_page = 1;
         store.state.catalog.products = [];
         let request_params = {
@@ -236,11 +240,11 @@ const store = createStore({
             if (response.data.status) {
               store.state.catalog.products = response.data.data;
               store.state.catalog.current_page++;
-              store.state.catalog.has_products = false;
             }
           })
           .finally(() => {
             store.state.is_loading = false;
+            console.log(store.state.catalog.has_products);
           });
       } else {
         store.commit("resetProducts");
@@ -271,7 +275,7 @@ const store = createStore({
               store.state.catalog.current_page++;
             }
           }
-        })
+        });
     },
   },
 });
