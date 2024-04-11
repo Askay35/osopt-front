@@ -5,23 +5,25 @@
       <p class="catalog-product-name">
         {{ product.name }}
       </p>
-      <div class="catalog-product-price">{{ product.price }} ₽</div>
-      <div class="catalog-product-bottom">
-        <OutlineOrangeBtn
-          class="catalog-product-remove"
-          v-if="count > 0"
-          @click="remFromCart"
-          ><IconMinus
-        /></OutlineOrangeBtn>
-        <OutlineOrangeBtn
-          class="catalog-product-add"
-          @click="pushToCart"
-          :class="{ active: count > 0 }"
-          ><IconPlus />Добавить
-          <div class="catalog-product-btn-count" v-if="count > 0">
-            {{ count }}
-          </div></OutlineOrangeBtn
-        >
+      <div class="d-flex mt-auto flex-column">
+        <div class="catalog-product-price">{{ product.price }} ₽</div>
+        <div class="catalog-product-bottom">
+          <OutlineOrangeBtn
+            class="catalog-product-remove"
+            v-if="count > 0"
+            @click="remFromCart"
+            ><IconMinus
+          /></OutlineOrangeBtn>
+          <OutlineOrangeBtn
+            class="catalog-product-add"
+            @click="pushToCart"
+            :class="{ active: count > 0 }"
+            ><IconPlus />Добавить
+            <div class="catalog-product-btn-count" v-if="count > 0">
+              {{ count }}
+            </div></OutlineOrangeBtn
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -150,9 +152,12 @@ export default {
   border-radius: 6px;
   img {
     height: 100%;
-    width: 100%;
+    object-fit: cover;
   }
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }
 .catalog-product-price {
   color: $default-bg-color;

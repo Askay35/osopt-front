@@ -352,6 +352,7 @@ export default {
 }
 .cart-item-name {
   font-weight: 600;
+  text-align: right;
   font-size: 20px;
 }
 .cart-item-desc {
