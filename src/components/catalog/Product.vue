@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-product-item">
     <div class="catalog-product-item-inner">
-      <div class="catalog-product-image"><img :src="image" /></div>
+      <div class="catalog-product-image"><img :src="$store.state.storage_url+product.image" /></div>
       <p class="catalog-product-name">
         {{ product.name }}
       </p>
@@ -54,13 +54,11 @@ export default {
   },
   data() {
     return {
-      image: "",
       count: 0,
     };
   },
   created() {
     this.count = this.getCartProductCount()(this.product.id);
-    this.image = Math.random() > 0.5 ? "/images/flash.jpg" : "/images/lays.png";
   },
   components: { OutlineOrangeBtn, IconPlus, IconMinus },
 };

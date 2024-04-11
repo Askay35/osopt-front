@@ -14,7 +14,10 @@ export default {
   created() {
     this.$store.state.is_loading = true;
   },
-  mounted() {
+  async mounted() {
+    if (!this.$store.state.catalog.categories.length) {
+      await this.loadCatalog();
+    }
     this.$store.state.is_loading = false;
   },
   components: {
@@ -45,17 +48,17 @@ export default {
       count_enter: false,
     };
   },
-  unmounted(){
+  unmounted() {
     this.addReleased();
     this.subReleased();
   },
   methods: {
-    countClicked(){
-      this.count_enter=true;
+    countClicked(id) {
+      this.count_enter = id;
     },
-    countChanged(payload){
-      this.count_enter=false;
-      if(payload.count > 0 && payload.count < 1000){
+    countChanged(payload) {
+      this.count_enter = false;
+      if (payload.count > 0 && payload.count < 1000) {
         this.setProductCount(payload);
       }
     },
@@ -85,7 +88,7 @@ export default {
       "addToCart",
       "selectPayType",
     ]),
-    ...mapActions(["createOrder"]),
+    ...mapActions(["createOrder", "loadCatalog"]),
   },
 };
 </script>
@@ -94,12 +97,12 @@ export default {
   <div class="container-lg d-flex flex-column pb-5">
     <template v-if="cart.length > 0">
       <div class="row d-flex justify-content-between cart-header">
-        <div class="col d-flex align-items-center">
-          <IconCart color="#3F3F3F" width="30" height="30" />
+        <div class="col d-flex align-items-center ps-0">
+          <IconCart color="#3F3F3F" width="25" height="25" />
           <div class="ms-2 fs-3 fw-bolder">Корзина</div>
         </div>
         <div
-          class="col-auto align-items-center d-flex text-secondary"
+          class="col-auto align-items-center pe-0 d-flex text-secondary"
           @click="clearCart"
           role="button"
         >
@@ -108,22 +111,78 @@ export default {
       </div>
       <div class="cart-items d-flex flex-column">
         <div v-for="(item, index) in cart" :key="index" class="cart-item">
-          <div
-            class="cart-item-left flex-column flex-md-row mb-5 mb-md-0 col-12 col-md-8"
-          >
+          <div class="cart-item-left flex-row col-12 col-md-8">
             <img
-              :src="$store.state.backend_url + item.image"
-              class="mb-4 mb-md-0 cart-item-image"
+              :src="$store.state.storage_url + item.image"
+              class="cart-item-image"
             />
-            <div class="w-100 w-md-auto cart-item-info">
-              <div class="cart-item-name">{{ item.name }}</div>
-              <div class="cart-item-desc">
-                {{ getCategoryName(item.category_id) }} /
-                {{ getSubcategoryName(item.subcategory_id) }}
+            <div
+              class="w-100 w-md-auto cart-item-info justify-content-space-between"
+            >
+              <div
+                class="d-flex flex-column align-items-end align-items-md-start"
+              >
+                <div class="cart-item-name">
+                  {{ item.name }}
+                </div>
+                <div class="cart-item-desc mt-1 text-end text-sm-start">
+                  {{ getCategoryName(item.category_id) }}<br class="d-block d-sm-none"><span class="d-none d-sm-inline"> /</span>
+                  {{ getSubcategoryName(item.subcategory_id) }}
+                </div>
+                <div class="cart-item-price mt-3 fs-4 d-block d-md-none">
+                  {{ (getCartProductCount(item.id) * item.price).toFixed() }}
+                  ₽
+                </div>
+              </div>
+              <div class="cart-item-right cart-item-mob-btns d-md-none">
+                <div
+                  class="cart-item-btns justify-content-end justify-content-md-center order-3 order-md-0"
+                >
+                  <orange-outline-btn
+                    class="button circle-btn cart-rem"
+                    @mousedown="
+                      subPressed({ id: item.id, can_remove_all: false })
+                    "
+                    @mouseup="subReleased"
+                    @mouseleave="subReleased"
+                    ><icon-minus></icon-minus
+                  ></orange-outline-btn>
+                  <div
+                    @click="countClicked(item.id)"
+                    v-if="count_enter!==item.id"
+                    class="cart-item-count"
+                  >
+                    {{ getCartProductCount(item.id) }}
+                  </div>
+                  <input
+                    min="0"
+                    maxlength="3"
+                    v-else
+                    @change="
+                      countChanged({ id: item.id, count: $event.target.value })
+                    "
+                    :value="getCartProductCount(item.id)"
+                    type="text"
+                    id="cart-item-count-inp"
+                  />
+                  <orange-outline-btn
+                    class="button circle-btn cart-add"
+                    @mousedown="addPressed(item)"
+                    @mouseup="addReleased"
+                    @mouseleave="addReleased"
+                    ><icon-plus></icon-plus
+                  ></orange-outline-btn>
+                </div>
+                <div
+                  @click="removeProductFromCart(item.id)"
+                  class="outline-secondary cart-item-remove me-0 me-md-3 order-1 order-md-0 button circle-btn"
+                >
+                  <icon-remove />
+                </div>
               </div>
             </div>
           </div>
-          <div class="cart-item-right col-12 col-md-4">
+          <div class="cart-item-right d-none d-md-flex col-4">
             <div
               class="cart-item-btns justify-content-end justify-content-md-center order-3 order-md-0"
             >
@@ -134,10 +193,24 @@ export default {
                 @mouseleave="subReleased"
                 ><icon-minus></icon-minus
               ></orange-outline-btn>
-              <div @click="countClicked" v-if="!count_enter" class="cart-item-count">
+              <div
+                @click="countClicked"
+                v-if="!count_enter"
+                class="cart-item-count"
+              >
                 {{ getCartProductCount(item.id) }}
               </div>
-              <input min="0" maxlength="3" v-else @change="countChanged({id:item.id,count:$event.target.value})" :value="getCartProductCount(item.id)" type="text" id="cart-item-count-inp">
+              <input
+                min="0"
+                maxlength="3"
+                v-else
+                @change="
+                  countChanged({ id: item.id, count: $event.target.value })
+                "
+                :value="getCartProductCount(item.id)"
+                type="text"
+                id="cart-item-count-inp"
+              />
               <orange-outline-btn
                 class="button circle-btn cart-add"
                 @mousedown="addPressed(item)"
@@ -161,24 +234,34 @@ export default {
       <div class="row mt-4 d-flex justify-content-between">
         <div class="col d-flex align-items-center">
           <div class="cart-bottom-info">
-            Всего товаров: <span class="fw-bolder">{{ getCartCount }} шт.</span>
+            Всего товаров:<br class="d-block d-sm-none" />&nbsp;<span
+              class="fw-bolder"
+              >{{ getCartCount }} шт.</span
+            >
           </div>
         </div>
         <div class="col-auto align-items-center">
           <div class="cart-bottom-info">
-            Сумма заказа:
-            <span class="text-orange fw-bolder">{{ getCartPrice }} ₽</span>
+            Сумма заказа:<br class="d-block d-sm-none" />&nbsp;
+            <span class="text-orange float-end float-sm-none fw-bolder"
+              >{{ getCartPrice }} ₽</span
+            >
           </div>
         </div>
       </div>
-      <div class="row mt-5 d-flex justify-content-between">
-        <RouterLink to="/" class="outline-secondary big-btn">
+      <div
+        class="row mt-5 d-flex cart-bottom-btns justify-content-between flex-column-reverse flex-sm-row gap-2 gap-sm-0"
+      >
+        <RouterLink
+          to="/"
+          class="outline-secondary button big-btn w-100 w-sm-auto"
+        >
           Вернуться назад
         </RouterLink>
         <OrangeBtn
           data-bs-toggle="modal"
           data-bs-target="#orderModal"
-          class="col-auto px-5"
+          class="col-auto px-5 w-100 w-sm-auto"
         >
           Заказать
         </OrangeBtn>
@@ -192,7 +275,7 @@ export default {
           Для того, чтобы это сделать, перейдите на главную страницу.
         </div>
         <icon-shopping class="mb-5" />
-        <RouterLink to="/" class="dark-btn">Вернуться назад</RouterLink>
+        <RouterLink to="/" class="button dark-btn">Вернуться назад</RouterLink>
       </div>
     </template>
 
@@ -221,7 +304,7 @@ export default {
               </div>
               <div class="mb-3">
                 <label for="message-text" class="col-form-label"
-                  >Сообщение (не обязательно):</label
+                  >Сообщение к заказу (не обязательно):</label
                 >
                 <textarea
                   v-model="order.message"
@@ -235,6 +318,8 @@ export default {
                 v-model="order.current_pay_type"
                 autocomplete="false"
                 :options="order.pay_types"
+                :clearSearchOnSelect="false"
+                :searchable="false"
                 class="mb-3"
               ></VueSelect>
             </div>
@@ -271,6 +356,7 @@ export default {
 }
 .cart-item-desc {
   font-size: 16px;
+  line-height: 1.1em;
   color: #ff672bf2;
 }
 .cart-empty {
@@ -278,23 +364,23 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-.cart-item-count{
+.cart-item-count {
   font-size: 18px;
   font-weight: 700;
 }
 #cart-item-count-inp {
   font-size: 18px;
   font-weight: 700;
-  border: 0!important;
-  outline: 0!important;
-  background:none;
-  border-radius: 0!important;
-  width:33px;
+  border: 0 !important;
+  outline: 0 !important;
+  background: none;
+  border-radius: 0 !important;
+  width: 33px;
 }
 .cart-item-price {
   font-size: 20px;
   font-weight: 700;
-  color: #000;
+  color: $default-text-color;
   text-align: center;
 }
 .cart-item-remove {
@@ -341,15 +427,42 @@ export default {
   align-items: center;
   gap: 15px;
 }
+.cart-item-mob-btns{
+  width: auto;
+  gap: 3rem;
+}
 .cart-header {
   padding-bottom: 30px;
 }
 @media (max-width: 768px) {
-  .cart-item-image{
-    width: 250px;
+  .cart-item-image {
+    height: 100%;
+    width: 120px;
+  }
+  .cart-items {
+    max-height: none;
+  }
+  .cart-item-info {
+    height: 100%;
+    align-items: end;
+    justify-content: space-between;
   }
   .cart-bottom-info {
     font-size: 1rem;
+  }
+  .cart-item-left {
+    height: 170px;
+  }
+}
+@media (max-width: 575.9px) {
+  .cart-bottom-btns {
+    & > .button {
+      max-width: 100%;
+    }
+  }
+  .cart-item-mob-btns{
+    gap:0;
+    width:100%;
   }
 }
 </style>

@@ -7,14 +7,16 @@ import axios from "axios";
 import { createStore } from "vuex";
 
 const axios_instance = axios.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL: "http://api.os-opt.ru/api/",
+  // baseURL: "http://localhost:8000/api/",
 });
 window.axios = axios_instance;
 
 const store = createStore({
   state() {
     return {
-      backend_url: "http://localhost:8080",
+      // backend_url: "http://storage.os-opt.ru",
+      storage_url: "http://storage.os-opt.ru",
       cart: [],
       order: {
         phone: "",
@@ -96,16 +98,16 @@ const store = createStore({
       for (let item of state.cart) {
         if (item.id === id) {
           state.cart.splice(index, 1);
-          localStorage.setItem("cart", JSON.stringify(state.cart));
+          localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
           return;
         }
         index++;
       }
     },
-    setProductCount(state,{id,count}){
+    setProductCount(state, { id, count }) {
       for (let item of state.cart) {
         if (item.id === id) {
-            item.count = Number.parseInt(count);
+          item.count = Number.parseInt(count);
         }
       }
     },
@@ -113,13 +115,13 @@ const store = createStore({
       for (let item of state.cart) {
         if (item.id === product.id) {
           item.count++;
-          localStorage.setItem("cart", JSON.stringify(state.cart));
+          localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
           return;
         }
       }
       product.count = 1;
       state.cart.push(product);
-      localStorage.setItem("cart", JSON.stringify(state.cart));
+      localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
     },
     removeFromCart(state, { id, can_remove_all }) {
       let index = 0;
@@ -130,12 +132,12 @@ const store = createStore({
         if (item.id === id) {
           if (item.count > 1) {
             item.count--;
-            localStorage.setItem("cart", JSON.stringify(state.cart));
+            localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
             return;
           } else {
             if (can_remove_all) {
               state.cart.splice(index, 1);
-              localStorage.setItem("cart", JSON.stringify(state.cart));
+              localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
               return;
             }
           }
@@ -145,7 +147,7 @@ const store = createStore({
     },
     clearCart(state) {
       state.cart = [];
-      localStorage.removeItem("cart");
+      localStorage.removeItem("osopt_cart");
     },
     incrementPage(state) {
       state.catalog.current_page++;
@@ -176,7 +178,7 @@ const store = createStore({
   },
   actions: {
     loadCategories() {
-      window.axios
+      return window.axios
         .get("categories")
         .then(function (response) {
           if (response.data.status) {
@@ -188,7 +190,7 @@ const store = createStore({
         });
     },
     loadSubcategories() {
-      window.axios
+      return window.axios
         .get("subcategories")
         .then(function (response) {
           if (response.data.status) {
@@ -199,9 +201,9 @@ const store = createStore({
           console.log(error);
         });
     },
-    loadCatalog() {
-      this.dispatch("loadCategories");
-      this.dispatch("loadSubcategories");
+    async loadCatalog() {
+      await this.dispatch("loadCategories");
+      await this.dispatch("loadSubcategories");
     },
     createOrder() {
       let order_data = {
@@ -215,7 +217,7 @@ const store = createStore({
       window.axios.post("orders", order_data).then(function (response) {
         if (response.data.status) {
           store.state.cart = [];
-          localStorage.removeItem("cart");
+          localStorage.removeItem("osopt_cart");
           alert("Заказ совершен");
         } else {
           alert("Не удалось совершить заказ");
@@ -287,8 +289,8 @@ const store = createStore({
   },
 });
 
-if (localStorage.getItem("cart")) {
-  store.state.cart = JSON.parse(localStorage.getItem("cart"));
+if (localStorage.getItem("osopt_cart")) {
+  store.state.cart = JSON.parse(localStorage.getItem("osopt_cart"));
 }
 
 const app = createApp(App);

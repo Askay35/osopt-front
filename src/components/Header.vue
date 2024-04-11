@@ -251,6 +251,7 @@ export default {
   position: absolute;
   right: 20px;
   top: 50%;
+  overflow: visible;
   width: 20px;
   cursor: pointer;
   height: 20px;
@@ -378,7 +379,7 @@ header {
 @media (max-width: 800px) {
   #floating-header {
     .header-search {
-      width: 200px;
+      display: none;
     }
   }
 }
