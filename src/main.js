@@ -7,7 +7,7 @@ import axios from "axios";
 import { createStore } from "vuex";
 
 const axios_instance = axios.create({
-  baseURL: "http://api.os-opt.ru/api/",
+  baseURL: "https://api.os-opt.ru/api/",
   // baseURL: "http://localhost:8000/api/",
 });
 window.axios = axios_instance;
@@ -16,7 +16,7 @@ const store = createStore({
   state() {
     return {
       // backend_url: "http://storage.os-opt.ru",
-      storage_url: "http://storage.os-opt.ru",
+      storage_url: "https://storage.os-opt.ru",
       cart: [],
       order: {
         phone: "",
@@ -24,7 +24,6 @@ const store = createStore({
         current_pay_type: "Наличные",
         pay_types: ["Наличные", "Перевод с карты", "Другое"],
       },
-      current_sorting: 1,
       sortings: [
         { id: 1, name: "умолчанию" },
         { id: 2, name: "цене (сначала дешевле)" },
@@ -39,6 +38,7 @@ const store = createStore({
         subcategories: [],
         current_category: -1,
         current_subcategory: 0,
+        current_sorting: 1,
         current_page: 1,
         has_products: true,
         per_page: 20,
@@ -89,9 +89,12 @@ const store = createStore({
   },
   mutations: {
     selectSorting(state, value) {
-      state.current_sorting = value;
-      store.commit("resetProducts");
-      store.dispatch("loadMoreProducts");
+      state.catalog.current_sorting = value;
+      state.catalog.current_page = 1;
+      state.catalog.products = [];
+      store.dispatch("loadMoreProducts").then(() => {
+        state.catalog.has_products = true;
+      });
     },
     removeProductFromCart(state, id) {
       let index = 0;
@@ -232,7 +235,7 @@ const store = createStore({
         let request_params = {
           page: store.state.catalog.current_page,
           per_page: store.state.catalog.per_page,
-          sorting: store.state.current_sorting,
+          sorting: store.state.catalog.current_sorting,
           category_id: store.state.catalog.current_category,
           search: store.state.search_query,
         };
@@ -265,7 +268,7 @@ const store = createStore({
       let request_params = {
         page: store.state.catalog.current_page,
         per_page: pp,
-        sorting: store.state.current_sorting,
+        sorting: store.state.catalog.current_sorting,
         category_id: store.state.catalog.current_category,
       };
       if (store.state.catalog.current_subcategory != 0) {

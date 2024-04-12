@@ -254,14 +254,14 @@ export default {
       >
         <RouterLink
           to="/"
-          class="outline-secondary button big-btn w-100 w-sm-auto"
+          class="outline-secondary button big-btn"
         >
           Вернуться назад
         </RouterLink>
         <OrangeBtn
           data-bs-toggle="modal"
           data-bs-target="#orderModal"
-          class="col-auto px-5 w-100 w-sm-auto"
+          class="col-auto px-5 button big-btn"
         >
           Заказать
         </OrangeBtn>
@@ -425,9 +425,6 @@ export default {
   scrollbar-width: 1px;
   scrollbar-color: $default-bg-color;
 }
-.cart-items::-webkit-scrollbar {
-  
-}
 
 .cart-item-left {
   display: flex;
@@ -461,10 +458,15 @@ export default {
     min-height: 170px;
   }
 }
+.cart-bottom-btns{
+  &>.button{
+    width:auto;
+  }
+}
 @media (max-width: 575.9px) {
   .cart-bottom-btns {
     & > .button {
-      max-width: 100%;
+      width: 100%;
     }
   }
   .cart-item-mob-btns{

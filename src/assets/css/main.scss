@@ -18,6 +18,9 @@ a {
 .text-secondary {
   color: $secondary-text-color;
 }
+.text-light-orange{
+  color:$light-orange-color;
+}
 body {
   background: $body-bg;
   margin: 0;
@@ -65,14 +68,14 @@ body {
   border-style: solid;
   border-radius: 50px;
   user-select: none;
+  border: none;
   align-items: center;
   justify-content: center;
-  display: flex;
+  display: inline-flex;
   padding: 8px 15px;
   font-weight: bolder;
   text-align: center;
   cursor: pointer;
-  max-width: max-content;
 }
 svg {
   display: flex;

@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 *.bat
+deploy.txt
 
 node_modules
 .DS_Store
@@ -15,7 +16,6 @@ dist
 dist-ssr
 coverage
 *.local
-
 /cypress/videos/
 /cypress/screenshots/
 

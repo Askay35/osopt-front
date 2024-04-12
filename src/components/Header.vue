@@ -4,6 +4,8 @@ import IconCart from "./icons/IconCart.vue";
 import IconSearch from "./icons/IconSearch.vue";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import IconRemove from "./icons/IconRemove.vue";
+import OrangeOutlineBtn from "./ui/OrangeOutlineBtn.vue";
+import OrangeBtn from "./ui/OrangeBtn.vue";
 
 export default {
   data() {
@@ -18,6 +20,8 @@ export default {
     IconRemove,
     IconSearch,
     RouterLink,
+    OrangeBtn,
+    OrangeOutlineBtn,
   },
   computed: {
     ...mapState(["search_query"]),
@@ -124,7 +128,7 @@ export default {
       />
     </div>
 
-    <RouterLink :to="{ name: 'cart' }" class="header-cart text-white d-flex">
+    <RouterLink :to="{ name: 'cart' }" class="header-cart button">
       <div class="header-cart-price">{{ getCartPrice }} ₽</div>
       <div class="header-cart-line"></div>
       <div class="header-cart__btn">
@@ -142,7 +146,7 @@ export default {
             <h2 class="header-desc">продукты оптом в Осетии</h2>
           </div>
         </RouterLink>
-        <div class="header-search col-4 ms-auto d-none d-sm-flex">
+        <div class="header-search col-4 ms-auto d-none d-md-flex">
           <input
             type="text"
             class="form-control search-input header-search-input"
@@ -182,20 +186,20 @@ export default {
             "
           />
         </div>
-        <div class="header-right">
-          <RouterLink
-            :to="{ name: 'cart' }"
-            class="header-cart text-white d-flex"
-          >
+        <div class="header-right d-flex">
+          <RouterLink :to="{ name: 'cart' }" class="header-cart button">
             <div class="header-cart-price">{{ getCartPrice }} ₽</div>
             <div class="header-cart-line"></div>
             <div class="header-cart__btn">
               <IconCart></IconCart>{{ getCartCount }}
             </div>
           </RouterLink>
+            <RouterLink class="button big-btn orange-outline-btn header-login-btn" :to="{ name: 'login' }">
+            Вход
+            </RouterLink>
         </div>
       </div>
-      <div class="header-search header-search-mobile col d-flex d-sm-none me-0">
+      <div class="header-search header-search-mobile col d-flex d-md-none me-0">
         <input
           type="text"
           class="form-control search-input"
@@ -284,6 +288,10 @@ export default {
     background: $light-hover-bg;
     color: $default-bg-color;
   }
+}
+.header-right{
+  height: 55px;
+  gap: 5px;
 }
 .header-search {
   position: relative;
@@ -374,10 +382,10 @@ header {
   }
 }
 @media (max-width: 420px) {
-  .header-title{
+  .header-title {
     font-size: 1.2rem;
   }
-  .header-desc{
+  .header-desc {
     font-size: 0.7rem;
   }
 }

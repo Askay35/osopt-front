@@ -38,6 +38,10 @@ a {
   color: #B6B6B6;
 }
 
+.text-light-orange {
+  color: #ff7b47;
+}
+
 body {
   background: #fff;
   margin: 0;
@@ -90,15 +94,14 @@ body {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+  border: none;
   align-items: center;
   justify-content: center;
-  display: flex;
+  display: inline-flex;
   padding: 8px 15px;
   font-weight: bolder;
   text-align: center;
   cursor: pointer;
-  max-width: -moz-max-content;
-  max-width: max-content;
 }
 
 svg {
