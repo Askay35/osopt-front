@@ -137,10 +137,9 @@ export default {
     <div class="container-xxl flex-column d-flex">
       <div class="d-flex align-items-center justify-content-between">
         <RouterLink :to="{ name: 'home' }" class="header-left d-flex">
-          <div class="header-logo"></div>
           <div class="header-left-info d-flex flex-column">
-            <div class="header-title fw-bolder">ОС ОПТ</div>
-            <div class="header-desc">продукты оптом</div>
+            <h1 class="header-title">Korzinochka</h1>
+            <h2 class="header-desc">продукты оптом в Осетии</h2>
           </div>
         </RouterLink>
         <div class="header-search col-4 ms-auto d-none d-sm-flex">
@@ -199,7 +198,7 @@ export default {
       <div class="header-search header-search-mobile col d-flex d-sm-none me-0">
         <input
           type="text"
-          class="form-control"
+          class="form-control search-input"
           :value="search_query"
           placeholder="Найти товар"
           @focusin="search_active = true"
@@ -244,7 +243,7 @@ export default {
 @import "@/assets/css/variables.scss";
 
 .header-search-mobile {
-  margin-top: 40px;
+  margin-top: 30px;
 }
 .header-search__btn,
 .header-remove-search__btn {
@@ -300,9 +299,6 @@ export default {
     z-index: 2;
   }
 }
-.header-title {
-  font-size: 28px !important;
-}
 #floating-header {
   display: flex;
   transition: all 0.3s ease;
@@ -344,43 +340,45 @@ export default {
   display: flex;
   gap: 6px;
 }
-.header-logo {
-  svg {
-    height: 100%;
-    width: 50px;
-  }
-  position: absolute;
-  left: 7px;
-  width: 93px;
-  height: 78px;
-  top: -26%;
-  z-index: 1;
-  border: 3px solid #fe5f1e;
-  border-radius: 10px;
-}
 .header-left {
   position: relative;
 }
 .header-left-info {
-  position: relative;
   background: #fff;
   z-index: 5;
-  padding: 5px 0;
 }
 header {
-  padding: 40px 0 30px;
+  padding: 30px 0;
   border-bottom: 1px solid $ui-border-color;
   margin-bottom: 20px;
 }
+
+.header-title {
+  line-height: 1em !important;
+  margin: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1.7rem;
+}
 .header-desc {
-  color: #7b7b7b;
-  font-size: 14px !important;
+  margin: 0;
+  line-height: 1em !important;
+  color: $default-bg-color;
+  font-size: 1rem;
 }
 @media (max-width: 800px) {
   #floating-header {
     .header-search {
       display: none;
     }
+  }
+}
+@media (max-width: 420px) {
+  .header-title{
+    font-size: 1.2rem;
+  }
+  .header-desc{
+    font-size: 0.7rem;
   }
 }
 </style>

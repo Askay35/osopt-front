@@ -7,7 +7,7 @@ import axios from "axios";
 import { createStore } from "vuex";
 
 const axios_instance = axios.create({
-  baseURL: "https://api.os-opt.ru/api/",
+  baseURL: "http://api.os-opt.ru/api/",
   // baseURL: "http://localhost:8000/api/",
 });
 window.axios = axios_instance;

@@ -2,9 +2,10 @@
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import Product from "./Product.vue";
 import VueSelect from "vue-select";
+import ScrollTopBtn from "../ui/ScrollTopBtn.vue";
 
 export default {
-  components: { Product, VueSelect },
+  components: { Product, VueSelect, ScrollTopBtn },
   data() {
     return {
       products_load_interval: null,
@@ -87,7 +88,7 @@ export default {
         document.body.clientHeight,
         document.documentElement.clientHeight
       );
-      return scrollTop > (documentHeight - windowHeight) * 0.75;
+      return scrollTop > (documentHeight - windowHeight) - 600;
     },
     scrollHandler() {
       if (
@@ -121,6 +122,7 @@ export default {
 
 <template>
   <div class="catalog-wrapper">
+    <ScrollTopBtn />
     <div class="catalog-categories mb-3">
       <div
         @click="selectCategory(-1)"

@@ -163,7 +163,7 @@ export default {
                     "
                     :value="getCartProductCount(item.id)"
                     type="text"
-                    id="cart-item-count-inp"
+                    class="cart-item-count-inp"
                   />
                   <orange-outline-btn
                     class="button circle-btn cart-add"
@@ -194,8 +194,8 @@ export default {
                 ><icon-minus></icon-minus
               ></orange-outline-btn>
               <div
-                @click="countClicked"
-                v-if="!count_enter"
+                @click="countClicked(item.id)"
+                v-if="count_enter!==item.id"
                 class="cart-item-count"
               >
                 {{ getCartProductCount(item.id) }}
@@ -209,7 +209,7 @@ export default {
                 "
                 :value="getCartProductCount(item.id)"
                 type="text"
-                id="cart-item-count-inp"
+                class="cart-item-count-inp"
               />
               <orange-outline-btn
                 class="button circle-btn cart-add"
@@ -345,7 +345,6 @@ export default {
   align-items: center;
 }
 .cart-item-image {
-  height: 100%;
   object-fit: cover;
   width: 150px;
   border-radius: 10px;
@@ -369,14 +368,16 @@ export default {
   font-size: 18px;
   font-weight: 700;
 }
-#cart-item-count-inp {
+.cart-item-count-inp {
   font-size: 18px;
   font-weight: 700;
-  border: 0 !important;
-  outline: 0 !important;
-  background: none;
-  border-radius: 0 !important;
-  width: 33px;
+  outline: 0;
+  background: none;  
+  border-radius: 3px !important;
+  width: 40px;
+  border: 1px solid #FE5F1E;
+  text-align: center;
+
 }
 .cart-item-price {
   font-size: 20px;
@@ -421,7 +422,13 @@ export default {
   max-height: 400px;
   overflow-y: scroll;
   border-bottom: 1px solid $ui-border-color;
+  scrollbar-width: 1px;
+  scrollbar-color: $default-bg-color;
 }
+.cart-items::-webkit-scrollbar {
+  
+}
+
 .cart-item-left {
   display: flex;
   height: 100%;
@@ -437,7 +444,6 @@ export default {
 }
 @media (max-width: 768px) {
   .cart-item-image {
-    height: 100%;
     width: 120px;
   }
   .cart-items {
@@ -452,7 +458,7 @@ export default {
     font-size: 1rem;
   }
   .cart-item-left {
-    height: 170px;
+    min-height: 170px;
   }
 }
 @media (max-width: 575.9px) {
