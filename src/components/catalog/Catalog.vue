@@ -38,27 +38,6 @@ export default {
     },
   },
   methods: {
-    addPressed(item) {
-      this.addToCart(item);
-      this.add_interval = setInterval(() => {
-        this.addToCart(item);
-      }, 100);
-    },
-    addReleased() {
-      clearInterval(this.add_interval);
-    },
-    subPressed(payload) {
-      this.removeFromCart(payload);
-      if(this.sub_interval==null){
-        this.sub_interval = setInterval(() => {
-        this.removeFromCart(payload);
-      }, 100);
-      }
-    },
-    subReleased() {
-      clearInterval(this.sub_interval);
-    },
-
     ...mapActions(["loadCatalog", "loadMoreProducts"]),
     ...mapMutations([
       "removeFromCart",
@@ -113,8 +92,6 @@ export default {
     }
   },
   unmounted() {
-    this.addReleased();
-    this.subReleased();
     clearInterval(this.products_load_interval);
   },
 };
@@ -192,10 +169,6 @@ export default {
         v-for="(product, index) in catalog.products"
         :key="index"
         :product="product"
-        @sub-pressed="subPressed"
-        @sub-released="subReleased"
-        @add-pressed="addPressed"
-        @add-released="addReleased"
       />
     </div>
   </div>

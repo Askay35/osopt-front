@@ -92,9 +92,12 @@ const store = createStore({
       state.catalog.current_sorting = value;
       state.catalog.current_page = 1;
       state.catalog.products = [];
-      store.dispatch("loadMoreProducts").then(() => {
-        state.catalog.has_products = true;
-      });
+      if(state.search_query){
+        store.dispatch("searchProducts");
+      }
+      else{
+        store.dispatch("loadMoreProducts");
+      }
     },
     removeProductFromCart(state, id) {
       let index = 0;
@@ -256,7 +259,6 @@ const store = createStore({
           })
           .finally(() => {
             store.state.is_loading = false;
-            console.log(store.state.catalog.has_products);
           });
       } else {
         store.commit("resetProducts");

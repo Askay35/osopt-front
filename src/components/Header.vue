@@ -194,9 +194,6 @@ export default {
               <IconCart></IconCart>{{ getCartCount }}
             </div>
           </RouterLink>
-            <RouterLink class="button big-btn orange-outline-btn header-login-btn" :to="{ name: 'login' }">
-            Вход
-            </RouterLink>
         </div>
       </div>
       <div class="header-search header-search-mobile col d-flex d-md-none me-0">
