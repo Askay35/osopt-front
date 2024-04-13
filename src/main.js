@@ -47,17 +47,22 @@ const store = createStore({
   },
   getters: {
     getCartCount(state) {
-      return state.cart.reduce((acc, i) => acc + i.count, 0);
+      return state.cart.reduce((acc, i) => acc + i.product_count, 0);
     },
     getCartPrice(state) {
       return state.cart
-        .reduce((acc, i) => acc + i.price * i.count, 0)
+        .reduce((acc, i) => {
+          if(i.package){
+            return acc + i.price * i.product_count * i.count;
+          }
+          return acc + i.price * i.product_count;
+        }, 0)
         .toFixed();
     },
     getCartProductCount: (state) => (id) => {
       for (const item of state.cart) {
         if (item.id === id) {
-          return item.count;
+          return item.product_count;
         }
       }
       return 0;
@@ -92,10 +97,9 @@ const store = createStore({
       state.catalog.current_sorting = value;
       state.catalog.current_page = 1;
       state.catalog.products = [];
-      if(state.search_query){
+      if (state.search_query) {
         store.dispatch("searchProducts");
-      }
-      else{
+      } else {
         store.dispatch("loadMoreProducts");
       }
     },
@@ -110,22 +114,25 @@ const store = createStore({
         index++;
       }
     },
-    setProductCount(state, { id, count }) {
+    setProductCount(state, { id, product_count }) {
       for (let item of state.cart) {
         if (item.id === id) {
-          item.count = Number.parseInt(count);
+          item.product_count = Number.parseInt(product_count);
         }
       }
     },
     addToCart(state, product) {
+      if (!("package" in product)) {
+        product.package = false;
+      }
       for (let item of state.cart) {
         if (item.id === product.id) {
-          item.count++;
+          item.product_count++;
           localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
           return;
         }
       }
-      product.count = 1;
+      product.product_count = 1;
       state.cart.push(product);
       localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
     },
@@ -136,8 +143,8 @@ const store = createStore({
       }
       for (let item of state.cart) {
         if (item.id === id) {
-          if (item.count > 1) {
-            item.count--;
+          if (item.product_count > 1) {
+            item.product_count--;
             localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
             return;
           } else {

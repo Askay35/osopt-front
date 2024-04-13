@@ -6,21 +6,24 @@
         {{ product.name }}
       </p>
       <div class="d-flex mt-auto flex-column">
+        <div class="d-flex flex-column">
+          <div class="catalog-product-attribute"><div class="text-secondary">В упаковке: </div><div class="catalog-product-attribute__value">{{ product.count ? product.count + " шт." : "Не указано" }}</div></div>
+        </div>
         <div class="catalog-product-price">{{ product.price }} ₽</div>
         <div class="catalog-product-bottom">
           <OutlineOrangeBtn
             class="catalog-product-remove"
-            v-if="count > 0"
+            v-if="product_count > 0"
             @click="remFromCart"
             ><IconMinus
           /></OutlineOrangeBtn>
           <OutlineOrangeBtn
             class="catalog-product-add"
             @click="pushToCart"
-            :class="{ active: count > 0 }"
+            :class="{ active: product_count > 0 }"
             ><IconPlus />Добавить
-            <div class="catalog-product-btn-count" v-if="count > 0">
-              {{ count }}
+            <div class="catalog-product-btn-count" v-if="product_count > 0">
+              {{ product_count }}
             </div></OutlineOrangeBtn
           >
         </div>
@@ -44,23 +47,23 @@ export default {
     ...mapGetters(["getCartProductCount"]),
     pushToCart() {
       this.addToCart(this.product);
-      this.count = this.getCartProductCount()(this.product.id);
+      this.product_count = this.getCartProductCount()(this.product.id);
     },
     remFromCart() {
       this.$store.commit("removeFromCart", {
         id: this.product.id,
         can_remove_all: true,
       });
-      this.count = this.getCartProductCount()(this.product.id);
+      this.product_count = this.getCartProductCount()(this.product.id);
     },
   },
   data() {
     return {
-      count: 0,
+      product_count: 0,
     };
   },
   created() {
-    this.count = this.getCartProductCount()(this.product.id);
+    this.product_count = this.getCartProductCount()(this.product.id);
   },
   components: { OutlineOrangeBtn, IconPlus, IconMinus },
 };
@@ -96,6 +99,7 @@ export default {
 }
 .catalog-product-name {
   font-weight: bolder;
+  margin-bottom: 5px;
   font-size: 18px;
   margin-top: 20px;
   color: $default-text-color;

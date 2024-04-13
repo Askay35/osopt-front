@@ -9,6 +9,8 @@ import IconRemove from "@/components/icons/IconRemove.vue";
 import IconShopping from "@/components/icons/IconShopping.vue";
 import OrangeBtn from "@/components/ui/OrangeBtn.vue";
 import VueSelect from "vue-select";
+import Checkbox from "@/components/ui/Checkbox.vue";
+import IconPackage from "@/components/icons/IconPackage.vue";
 
 export default {
   created() {
@@ -30,6 +32,8 @@ export default {
     OrangeBtn,
     OrangeOutlineBtn,
     IconRemove,
+    Checkbox,
+    IconPackage,
   },
   computed: {
     ...mapState(["order", "cart"]),
@@ -45,6 +49,8 @@ export default {
     return {
       add_interval: null,
       sub_interval: null,
+      add_pressed: false,
+      sub_pressed: false,
       count_enter: false,
     };
   },
@@ -58,26 +64,40 @@ export default {
     },
     countChanged(payload) {
       this.count_enter = false;
-      if (payload.count > 0 && payload.count < 1000) {
+      if (payload.product_count > 0 && payload.product_count < 1000) {
         this.setProductCount(payload);
       }
     },
     addPressed(item) {
       this.addToCart(item);
-      this.add_interval = setInterval(() => {
-        this.addToCart(item);
-      }, 100);
+      this.add_pressed = true;
+      setTimeout(() => {
+        if (this.add_pressed) {
+          this.add_interval = setInterval(() => {
+            this.add_pressed = false;
+            this.addToCart(item);
+          }, 100);
+        }
+      }, 600);
     },
     addReleased() {
+      this.add_pressed = false;
       clearInterval(this.add_interval);
     },
     subPressed(payload) {
       this.removeFromCart(payload);
-      this.sub_interval = setInterval(() => {
-        this.removeFromCart(payload);
-      }, 100);
+      this.sub_pressed = true;
+      setTimeout(() => {
+        if (this.sub_pressed) {
+          this.sub_interval = setInterval(() => {
+            this.sub_pressed = false;
+            this.removeFromCart(payload);
+          }, 100);
+        }
+      }, 600);
     },
     subReleased() {
+      this.sub_pressed = false;
       clearInterval(this.sub_interval);
     },
     ...mapMutations([
@@ -111,7 +131,7 @@ export default {
       </div>
       <div class="cart-items d-flex flex-column">
         <div v-for="(item, index) in cart" :key="index" class="cart-item">
-          <div class="cart-item-left flex-row col-12 col-md-8">
+          <div class="cart-item-left flex-row col-12 col-md-7">
             <img
               :src="$store.state.storage_url + item.image"
               class="cart-item-image"
@@ -126,11 +146,29 @@ export default {
                   {{ item.name }}
                 </div>
                 <div class="cart-item-desc mt-1 text-end text-sm-start">
-                  {{ getCategoryName(item.category_id) }}<br class="d-block d-sm-none"><span class="d-none d-sm-inline"> /</span>
+                  {{ getCategoryName(item.category_id)
+                  }}<br class="d-block d-sm-none" /><span
+                    class="d-none d-sm-inline"
+                  >
+                    /</span
+                  >
                   {{ getSubcategoryName(item.subcategory_id) }}
+                  <br />
+                  <div class="catalog-product-attribute">
+                    <div class="text-secondary">В упаковке:</div>
+                    <div class="catalog-product-attribute__value">
+                      {{ item.count ? item.count + " шт." : "Не указано" }}
+                    </div>
+                  </div>
                 </div>
                 <div class="cart-item-price mt-3 fs-4 d-block d-md-none">
-                  {{ (getCartProductCount(item.id) * item.price).toFixed() }}
+                  {{
+                    (
+                      getCartProductCount(item.id) *
+                      item.price *
+                      (item.package ? item.count : 1)
+                    ).toFixed()
+                  }}
                   ₽
                 </div>
               </div>
@@ -149,7 +187,7 @@ export default {
                   ></orange-outline-btn>
                   <div
                     @click="countClicked(item.id)"
-                    v-if="count_enter!==item.id"
+                    v-if="count_enter !== item.id"
                     class="cart-item-count"
                   >
                     {{ getCartProductCount(item.id) }}
@@ -159,7 +197,10 @@ export default {
                     maxlength="3"
                     v-else
                     @change="
-                      countChanged({ id: item.id, count: $event.target.value })
+                      countChanged({
+                        id: item.id,
+                        product_count: $event.target.value,
+                      })
                     "
                     :value="getCartProductCount(item.id)"
                     type="text"
@@ -179,10 +220,13 @@ export default {
                 >
                   <icon-remove />
                 </div>
+                <Checkbox v-if="item.count" v-model="item.package"
+                  ><IconPackage color="#ff7b47" /></Checkbox
+                >
               </div>
             </div>
           </div>
-          <div class="cart-item-right d-none d-md-flex col-4">
+          <div class="cart-item-right d-none d-md-flex col-5">
             <div
               class="cart-item-btns justify-content-end justify-content-md-center order-3 order-md-0"
             >
@@ -195,7 +239,7 @@ export default {
               ></orange-outline-btn>
               <div
                 @click="countClicked(item.id)"
-                v-if="count_enter!==item.id"
+                v-if="count_enter !== item.id"
                 class="cart-item-count"
               >
                 {{ getCartProductCount(item.id) }}
@@ -205,7 +249,10 @@ export default {
                 maxlength="3"
                 v-else
                 @change="
-                  countChanged({ id: item.id, count: $event.target.value })
+                  countChanged({
+                    id: item.id,
+                    product_count: $event.target.value,
+                  })
                 "
                 :value="getCartProductCount(item.id)"
                 type="text"
@@ -220,8 +267,18 @@ export default {
               ></orange-outline-btn>
             </div>
             <div class="cart-item-price order-2 order-md-0">
-              {{ (getCartProductCount(item.id) * item.price).toFixed() }} ₽
+              {{
+                (
+                  getCartProductCount(item.id) *
+                  item.price *
+                  (item.package ? item.count : 1)
+                ).toFixed()
+              }}
+              ₽
             </div>
+            <Checkbox v-if="item.count" v-model="item.package"
+              >Упаковки</Checkbox
+            >
             <div
               @click="removeProductFromCart(item.id)"
               class="outline-secondary cart-item-remove me-0 me-md-3 order-1 order-md-0 button circle-btn"
@@ -252,10 +309,7 @@ export default {
       <div
         class="row mt-5 d-flex cart-bottom-btns justify-content-between flex-column-reverse flex-sm-row gap-2 gap-sm-0"
       >
-        <RouterLink
-          to="/"
-          class="outline-secondary button big-btn"
-        >
+        <RouterLink to="/" class="outline-secondary button big-btn">
           Вернуться назад
         </RouterLink>
         <OrangeBtn
@@ -341,8 +395,9 @@ export default {
 
 .cart-item-right {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
+  gap: 30px;
 }
 .cart-item-image {
   object-fit: cover;
@@ -372,18 +427,18 @@ export default {
   font-size: 18px;
   font-weight: 700;
   outline: 0;
-  background: none;  
+  background: none;
   border-radius: 3px !important;
   width: 40px;
-  border: 1px solid #FE5F1E;
+  border: 1px solid #fe5f1e;
   text-align: center;
-
 }
 .cart-item-price {
   font-size: 20px;
   font-weight: 700;
   color: $default-text-color;
   text-align: center;
+  white-space: nowrap;
 }
 .cart-item-remove {
   border-width: 2px;
@@ -430,11 +485,11 @@ export default {
   display: flex;
   height: 100%;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
-.cart-item-mob-btns{
+.cart-item-mob-btns {
   width: auto;
-  gap: 3rem;
+  gap: 4rem;
 }
 .cart-header {
   padding-bottom: 30px;
@@ -458,9 +513,9 @@ export default {
     min-height: 170px;
   }
 }
-.cart-bottom-btns{
-  &>.button{
-    width:auto;
+.cart-bottom-btns {
+  & > .button {
+    width: auto;
   }
 }
 @media (max-width: 575.9px) {
@@ -469,9 +524,10 @@ export default {
       width: 100%;
     }
   }
-  .cart-item-mob-btns{
-    gap:0;
-    width:100%;
+  .cart-item-mob-btns {
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    width: 100%;
   }
 }
 </style>

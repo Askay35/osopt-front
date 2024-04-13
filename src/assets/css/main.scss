@@ -91,6 +91,17 @@ svg {
   color: #d0d0d0;
 }
 
+.catalog-product-attribute{
+  display: flex;
+  margin-bottom:10px;
+  gap:5px;
+  color:$default-text-color;
+}
+.catalog-product-attribute__value{
+  color:$light-orange-color;
+  font-weight: 600;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none!important;
