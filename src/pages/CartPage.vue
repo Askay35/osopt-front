@@ -220,7 +220,7 @@ export default {
                 >
                   <icon-remove />
                 </div>
-                <Checkbox v-if="item.count" v-model="item.package"
+                <Checkbox v-if="item.count" class="flex-row-reverse" v-model="item.package"
                   ><IconPackage color="#ff7b47" /></Checkbox
                 >
               </div>
@@ -497,6 +497,7 @@ export default {
 @media (max-width: 768px) {
   .cart-item-image {
     width: 120px;
+    height: 150px;
   }
   .cart-items {
     max-height: none;
@@ -510,6 +511,7 @@ export default {
     font-size: 1rem;
   }
   .cart-item-left {
+    align-items: flex-start;
     min-height: 170px;
   }
 }
@@ -526,8 +528,9 @@ export default {
   }
   .cart-item-mob-btns {
     flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
+    gap: 1rem 1.5rem;
     width: 100%;
+    margin-top: 5px;
   }
 }
 </style>
