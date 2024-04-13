@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-product-item">
     <div class="catalog-product-item-inner">
-      <div class="catalog-product-image"><img :src="$store.state.storage_url+product.image" /></div>
+      <div class="catalog-product-image"><img :src="$store.state.storage_url+product.image" loading="lazy" :alt="product.name" /></div>
       <p class="catalog-product-name">
         {{ product.name }}
       </p>
