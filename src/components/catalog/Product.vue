@@ -5,9 +5,9 @@
       <p class="catalog-product-name">
         {{ product.name }}
       </p>
-      <div class="d-flex mt-auto flex-column">
-        <div class="d-flex flex-column">
-          <div class="catalog-product-attribute"><div class="text-secondary">В упаковке: </div><div class="catalog-product-attribute__value">{{ product.count ? product.count + " шт." : "Не указано" }}</div></div>
+      <div class="flex mt-auto flex-col">
+        <div class="flex flex-col">
+          <div class="catalog-product-attribute"><div class="text-gray-600">В упаковке: </div><div class="catalog-product-attribute__value">{{ product.count ? product.count + " шт." : "Не указано" }}</div></div>
         </div>
         <div class="catalog-product-price">{{ product.price }} ₽</div>
         <div class="catalog-product-bottom">
@@ -99,9 +99,9 @@ export default {
 }
 .catalog-product-name {
   font-weight: bolder;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   font-size: 18px;
-  margin-top: 20px;
+  margin-top: 30px;
   color: $default-text-color;
 }
 
@@ -111,9 +111,6 @@ export default {
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
-}
-.catalog-product-item {
-  margin-bottom: 60px;
 }
 
 .catalog-product-add {
@@ -167,5 +164,6 @@ export default {
   color: $default-bg-color;
   font-size: 24px;
   font-weight: 700;
+  margin-top: 5px;
 }
 </style>

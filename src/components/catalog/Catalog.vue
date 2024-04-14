@@ -17,17 +17,15 @@ export default {
   },
   computed: {
     catalogClassList() {
-      return (
-        "row-cols-1 " +
-        "row-cols-sm-" +
+      return "grid-cols-1" +
+        " sm:grid-cols-" +
         (this.row_items - 3) +
-        " row-cols-md-" +
+        " md:grid-cols-" +
         (this.row_items - 2) +
-        " row-cols-lg-" +
+        " lg:grid-cols-" +
         (this.row_items - 1) +
-        " row-cols-xl-" +
-        this.row_items
-      );
+        " xl:grid-cols-" +
+        this.row_items;
     },
     ...mapState(["catalog", "current_sorting", "sortings"]),
     ...mapGetters(["getCurrentCategory", "getCurrentSubcategories"]),
@@ -68,7 +66,10 @@ export default {
         document.body.clientHeight,
         document.documentElement.clientHeight
       );
-      return documentHeight != windowHeight && scrollTop > (documentHeight - windowHeight) - 800;
+      return (
+        documentHeight != windowHeight &&
+        scrollTop > documentHeight - windowHeight - 800
+      );
     },
     scrollHandler() {
       if (
@@ -86,7 +87,7 @@ export default {
     if (this.$store.state.catalog.has_products) {
       this.$store.commit("resetProducts");
       this.$store.state.is_loading = true;
-      this.loadMoreProducts({per_page:30}).finally(() => {
+      this.loadMoreProducts({ per_page: 30 }).finally(() => {
         this.$store.state.is_loading = false;
       });
       this.products_load_interval = setInterval(this.scrollHandler, 750);
@@ -137,11 +138,7 @@ export default {
     </template>
     <template v-if="$store.state.catalog.brands.length > 0">
       <div class="catalog-filter-items catalog-brands items-center">
-        <div class="font-semibold">Бренд</div>
-        <template
-          v-for="brand in $store.state.catalog.brands"
-          :key="brand.id"
-        >
+        <template v-for="brand in $store.state.catalog.brands" :key="brand.id">
           <div
             @click="selectBrand(brand.id)"
             class="catalog-category"
@@ -152,9 +149,9 @@ export default {
         </template>
       </div>
     </template>
-    <div class="d-flex align-items-center mt-3">
+    <div class="flex items-center mt-5">
       <div
-        class="user-select-none catalog-sorting d-flex flex-column flex-sm-row align-items-sm-center font-semibold"
+        class="user-select-none catalog-sorting flex flex-col sm:flex-row sm:items-center font-semibold"
       >
         Сортировать по:
         <VueSelect
@@ -165,7 +162,7 @@ export default {
           :reduce="(option) => option.id"
           :options="sortings"
           label="name"
-          class="catalog-sorting-select ms-0 ms-sm-2"
+          class="catalog-sorting-select ms-0 sm:ms-1"
         ></VueSelect>
       </div>
       <div class="ms-auto catalog-view-btns">
@@ -181,9 +178,8 @@ export default {
         ></div>
       </div>
     </div>
-    <div class="catalog-products d-flex" :class="catalogClassList">
+    <div class="catalog-products grid gap-10 gap-y-16 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
       <product
-        class="px-3"
         v-for="(product, index) in catalog.products"
         :key="index"
         :product="product"
@@ -244,7 +240,7 @@ export default {
     }
   }
 }
-.catalog-brands{
+.catalog-brands {
   padding-top: 1rem;
   margin-top: 1rem;
   border-top: 1px solid $ui-border-color;

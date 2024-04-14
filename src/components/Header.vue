@@ -87,10 +87,10 @@ export default {
 
 <template>
   <div id="floating-header">
-    <div class="header-search col-4 ms-auto">
+    <div class="header-search w-1/3 ms-auto">
       <input
         type="text"
-        class="form-control search-input"
+        class="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded search-input"
         :value="search_query"
         placeholder="Найти товар"
         @focusin="floating_search_active = true"
@@ -138,18 +138,18 @@ export default {
   </div>
 
   <header>
-    <div class="container-xxl flex-column d-flex">
-      <div class="d-flex align-items-center justify-content-between">
-        <RouterLink :to="{ name: 'home' }" class="header-left d-flex">
-          <div class="header-left-info d-flex flex-column">
+    <div class="lg:container px-6 md:px-20 mx-auto flex-col flex">
+      <div class="flex items-center justify-between">
+        <RouterLink :to="{ name: 'home' }" class="header-left flex">
+          <div class="header-left-info flex flex-col">
             <h1 class="header-title">Korzinochka</h1>
             <h2 class="header-desc">продукты оптом в Осетии</h2>
           </div>
         </RouterLink>
-        <div class="header-search col-4 ms-auto d-none d-md-flex">
+        <div class="header-search me-3 w-1/3 ms-auto hidden md:flex">
           <input
             type="text"
-            class="form-control search-input header-search-input"
+            class="block appearance-none w-full py-1 px-2 bg-white text-gray-800 border border-gray-200 rounded-full search-input header-search-input"
             :value="search_query"
             placeholder="Найти товар"
             @focusin="search_active = true"
@@ -186,7 +186,7 @@ export default {
             "
           />
         </div>
-        <div class="header-right d-flex">
+        <div class="header-right flex">
           <RouterLink :to="{ name: 'cart' }" class="header-cart button">
             <div class="header-cart-price">{{ getCartPrice }} ₽</div>
             <div class="header-cart-line"></div>
@@ -196,10 +196,10 @@ export default {
           </RouterLink>
         </div>
       </div>
-      <div class="header-search header-search-mobile col d-flex d-md-none me-0">
+      <div class="header-search header-search-mobile relative flex-grow max-w-full flex-1 flex md:hidden me-0">
         <input
           type="text"
-          class="form-control search-input"
+          class="block appearance-none w-full bg-white border rounded-full search-input"
           :value="search_query"
           placeholder="Найти товар"
           @focusin="search_active = true"
@@ -292,7 +292,6 @@ export default {
 }
 .header-search {
   position: relative;
-  margin-right: 20px;
   .search-input {
     height: 55px !important;
     border-radius: 30px;

@@ -1,5 +1,8 @@
 @import "vue-select/dist/vue-select.css";
-.form-control:focus {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+input:focus {
   box-shadow: none;
   color: #2C2C2C !important;
   border: 1px solid #FE5F1E !important;
@@ -7,19 +10,16 @@
 
 input {
   border-radius: 50px !important;
+  border-color: #f0f0f0;
+}
+input:focus-visible {
+  outline: none !important;
 }
 
 textarea {
   border-radius: 10px !important;
 }
 
-.form-control {
-  border-color: #f0f0f0;
-}
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 a {
   text-decoration: none;
   color: #2C2C2C;

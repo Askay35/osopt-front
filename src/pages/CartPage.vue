@@ -114,54 +114,54 @@ export default {
 </script>
 
 <template>
-  <div class="container-lg d-flex flex-column pb-5">
+  <div class="container min-w-lg mx-auto sm:px-4 flex flex-col pb-5">
     <template v-if="cart.length > 0">
-      <div class="row d-flex justify-content-between cart-header">
-        <div class="col d-flex align-items-center ps-0">
+      <div class="flex flex-wrap flex justify-between cart-header">
+        <div class="relative flex-grow max-w-full flex-1 px-4 flex items-center ps-0">
           <IconCart color="#3F3F3F" width="25" height="25" />
           <div class="ms-2 fs-3 fw-bolder">Корзина</div>
         </div>
         <div
-          class="col-auto align-items-center pe-0 d-flex text-secondary"
+          class="col-auto items-center pe-0 flex text-gray-600"
           @click="clearCart"
           role="button"
         >
           <IconBucket class="me-2" /> Очистить корзину
         </div>
       </div>
-      <div class="cart-items d-flex flex-column">
+      <div class="cart-items flex flex-col">
         <div v-for="(item, index) in cart" :key="index" class="cart-item">
-          <div class="cart-item-left flex-row col-12 col-md-7">
+          <div class="cart-item-left flex-row w-full md:w-3/5 pr-4 pl-4">
             <img
               :src="$store.state.storage_url + item.image"
               class="cart-item-image"
             />
             <div
-              class="w-100 w-md-auto cart-item-info justify-content-space-between"
+              class="w-full w-md-auto cart-item-info justify-content-space-between"
             >
               <div
-                class="d-flex flex-column align-items-end align-items-md-start"
+                class="flex flex-col items-end md:items-start"
               >
                 <div class="cart-item-name">
                   {{ item.name }}
                 </div>
                 <div class="cart-item-desc mt-1 text-end text-sm-start">
                   {{ getCategoryName(item.category_id)
-                  }}<br class="d-block d-sm-none" /><span
-                    class="d-none d-sm-inline"
+                  }}<br class="block sm:hidden" /><span
+                    class="hidden sm:inline"
                   >
                     /</span
                   >
                   {{ getSubcategoryName(item.subcategory_id) }}
                   <br />
                   <div class="catalog-product-attribute">
-                    <div class="text-secondary">В упаковке:</div>
+                    <div class="text-gray-600">В упаковке:</div>
                     <div class="catalog-product-attribute__value">
                       {{ item.count ? item.count + " шт." : "Не указано" }}
                     </div>
                   </div>
                 </div>
-                <div class="cart-item-price mt-3 fs-4 d-block d-md-none">
+                <div class="cart-item-price mt-3 fs-4 block md:hidden">
                   {{
                     (
                       getCartProductCount(item.id) *
@@ -172,9 +172,9 @@ export default {
                   ₽
                 </div>
               </div>
-              <div class="cart-item-right cart-item-mob-btns d-md-none">
+              <div class="cart-item-right cart-item-mob-btns md:hidden">
                 <div
-                  class="cart-item-btns justify-content-end justify-content-md-center order-3 order-md-0"
+                  class="cart-item-btns justify-end md:justify-center order-3 md:order-0"
                 >
                   <orange-outline-btn
                     class="button circle-btn cart-rem"
@@ -216,7 +216,7 @@ export default {
                 </div>
                 <div
                   @click="removeProductFromCart(item.id)"
-                  class="outline-secondary cart-item-remove me-0 me-md-3 order-1 order-md-0 button circle-btn"
+                  class="outline-secondary cart-item-remove me-0 md:me-4 order-1 md:order-0 button circle-btn"
                 >
                   <icon-remove />
                 </div>
@@ -226,9 +226,9 @@ export default {
               </div>
             </div>
           </div>
-          <div class="cart-item-right d-none d-md-flex col-5">
+          <div class="cart-item-right hidden md:flex w-2/5">
             <div
-              class="cart-item-btns justify-content-end justify-content-md-center order-3 order-md-0"
+              class="cart-item-btns justify-end md:justify-center order-3 md:order-0"
             >
               <orange-outline-btn
                 class="button circle-btn cart-rem"
@@ -266,7 +266,7 @@ export default {
                 ><icon-plus></icon-plus
               ></orange-outline-btn>
             </div>
-            <div class="cart-item-price order-2 order-md-0">
+            <div class="cart-item-price order-2 md:order-0">
               {{
                 (
                   getCartProductCount(item.id) *
@@ -281,33 +281,33 @@ export default {
             >
             <div
               @click="removeProductFromCart(item.id)"
-              class="outline-secondary cart-item-remove me-0 me-md-3 order-1 order-md-0 button circle-btn"
+              class="outline-secondary cart-item-remove me-0 md:me-4 order-1 md:order-0 button circle-btn"
             >
               <icon-remove />
             </div>
           </div>
         </div>
       </div>
-      <div class="row mt-4 d-flex justify-content-between">
-        <div class="col d-flex align-items-center">
+      <div class="flex flex-wrap  mt-4 flex justify-between">
+        <div class="relative flex-grow max-w-full flex-1 px-4 flex items-center">
           <div class="cart-bottom-info">
-            Всего товаров:<br class="d-block d-sm-none" />&nbsp;<span
+            Всего товаров:<br class="block sm:hidden" />&nbsp;<span
               class="fw-bolder"
               >{{ getCartCount }} шт.</span
             >
           </div>
         </div>
-        <div class="col-auto align-items-center">
+        <div class="col-auto items-center">
           <div class="cart-bottom-info">
-            Сумма заказа:<br class="d-block d-sm-none" />&nbsp;
-            <span class="text-orange float-end float-sm-none fw-bolder"
+            Сумма заказа:<br class="block sm:hidden" />&nbsp;
+            <span class="text-orange float-end sm:float-none fw-bolder"
               >{{ getCartPrice }} ₽</span
             >
           </div>
         </div>
       </div>
       <div
-        class="row mt-5 d-flex cart-bottom-btns justify-content-between flex-column-reverse flex-sm-row gap-2 gap-sm-0"
+        class="flex flex-wrap  mt-5 flex cart-bottom-btns justify-between flex-col-reverse sm:flex-row gap-2 gap-sm-0"
       >
         <RouterLink to="/" class="outline-secondary button big-btn">
           Вернуться назад
@@ -324,7 +324,7 @@ export default {
     <template v-else>
       <div class="m-auto cart-empty text-center mt-4">
         <div class="display-6 fw-bold mb-2">Корзина пуста</div>
-        <div class="text-secondary mb-5">
+        <div class="text-gray-600 mb-5">
           Вероятнее всего, Вы ещё не добавили товары в корзину. <br />
           Для того, чтобы это сделать, перейдите на главную страницу.
         </div>
@@ -334,7 +334,7 @@ export default {
     </template>
 
     <div
-      class="modal fade"
+      class="modal opacity-0"
       id="orderModal"
       tabindex="-1"
       aria-labelledby="orderModalLabel"
@@ -345,29 +345,29 @@ export default {
           <div class="modal-body">
             <div>
               <div class="mb-3">
-                <label for="phone" class="col-form-label"
+                <label for="phone" class="pt-2 pb-2 mb-0 leading-normal"
                   >Телефон (или другой контакт):</label
                 >
                 <input
                   type="text"
                   v-model="order.phone"
                   required
-                  class="form-control"
+                  class="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
                   id="phone"
                 />
               </div>
               <div class="mb-3">
-                <label for="message-text" class="col-form-label"
+                <label for="message-text" class="pt-2 pb-2 mb-0 leading-normal"
                   >Сообщение к заказу (не обязательно):</label
                 >
                 <textarea
                   v-model="order.message"
                   maxlength="300"
-                  class="form-control"
+                  class="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
                   id="message-text"
                 ></textarea>
               </div>
-              <label class="col-form-label">Тип оплаты:</label>
+              <label class="pt-2 pb-2 mb-0 leading-normal">Тип оплаты:</label>
               <VueSelect
                 v-model="order.current_pay_type"
                 autocomplete="false"

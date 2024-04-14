@@ -1,16 +1,17 @@
 @import "variables.scss";
 
-.form-control:focus {
+input:focus {
   box-shadow: none;
   color: $default-text-color !important;
   border: 1px solid $default-bg-color !important;
 }
-input{
-  border-radius: 50px!important;
-}
-textarea{
-  border-radius:10px!important;
-}
-.form-control{
+input {
+  border-radius: 50px !important;
   border-color: $ui-border-color;
+  &:focus-visible{
+    outline: none!important;
+  }
+}
+textarea {
+  border-radius: 10px !important;
 }
