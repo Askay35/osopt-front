@@ -67,7 +67,7 @@ export default {
         document.body.clientHeight,
         document.documentElement.clientHeight
       );
-      return scrollTop > (documentHeight - windowHeight) - 600;
+      return documentHeight != windowHeight && scrollTop > (documentHeight - windowHeight) - 800;
     },
     scrollHandler() {
       if (
@@ -85,10 +85,10 @@ export default {
     if (this.$store.state.catalog.has_products) {
       this.$store.commit("resetProducts");
       this.$store.state.is_loading = true;
-      this.loadMoreProducts(30).finally(() => {
+      this.loadMoreProducts({per_page:30}).finally(() => {
         this.$store.state.is_loading = false;
       });
-      this.products_load_interval = setInterval(this.scrollHandler, 1000);
+      this.products_load_interval = setInterval(this.scrollHandler, 750);
     }
   },
   unmounted() {

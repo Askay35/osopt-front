@@ -103,11 +103,10 @@ const store = createStore({
     selectSorting(state, value) {
       state.catalog.current_sorting = value;
       state.catalog.current_page = 1;
-      state.catalog.products = [];
       if (state.search_query) {
         store.dispatch("searchProducts");
       } else {
-        store.dispatch("loadMoreProducts");
+        store.dispatch("loadMoreProducts", {add:false});
       }
     },
     removeProductFromCart(state, id) {
@@ -173,34 +172,37 @@ const store = createStore({
       state.catalog.current_page++;
     },
     resetProducts(state) {
+      store.commit('resetCatalogPage');
+      state.catalog.products = [];
+    },
+    resetCatalogPage(state){
       state.catalog.current_page = 1;
       state.catalog.has_products = true;
-      state.catalog.products = [];
     },
     setSearchQuery(state, query) {
       state.search_query = query;
     },
     selectCategory(state, id) {
       if (state.catalog.current_category != id) {
-        store.commit('resetProducts');
+        store.commit('resetCatalogPage');
         state.catalog.current_category = id;
         state.catalog.current_subcategory = 0;
         store.dispatch("loadSubcategories", true);
-        store.dispatch("loadMoreProducts");
+        store.dispatch("loadMoreProducts", {add:false});
       }
     },
     selectSubcategory(state, id) {
       if (state.catalog.current_subcategory != id) {
-        store.commit('resetProducts');
+        store.commit('resetCatalogPage');
         state.catalog.current_subcategory = id;
-        store.dispatch("loadMoreProducts");
+        store.dispatch("loadMoreProducts", {add:false});
       }
     },
     selectBrand(state, id) {
       if (state.catalog.current_brand != id) {
-        store.commit('resetProducts');
+        store.commit('resetCatalogPage');
         state.catalog.current_brand = id;
-        store.dispatch("loadMoreProducts");
+        store.dispatch("loadMoreProducts", {add:false});
       }
     },
   },
@@ -228,7 +230,6 @@ const store = createStore({
         .get("subcategories", payload)
         .then(function (response) {
           if (response.data.status) {
-            console.log(response.data.data);
             store.state.catalog.subcategories = response.data.data;
           }
         });
@@ -253,6 +254,8 @@ const store = createStore({
         } else {
           alert("Не удалось совершить заказ");
         }
+      }).catch(err=>{
+        alert("Не удалось совершить заказ");
       });
     },
     searchProducts() {
@@ -286,12 +289,16 @@ const store = createStore({
             store.state.is_loading = false;
           });
       } else {
-        store.commit("resetProducts");
+        store.commit("resetCatalogPage");
         store.dispatch("loadMoreProducts");
       }
     },
-    loadMoreProducts(state, per_page = -1) {
-      let pp = per_page != -1 ? per_page : store.state.catalog.per_page;
+    loadMoreProducts(state, options = {}) {
+      let opts =  {per_page:-1, add:true};
+      opts.per_page = 'per_page' in options ? options.per_page : opts.per_page; 
+      opts.add = 'add' in options ? options.add : opts.add; 
+
+      let pp = opts.per_page != -1 ? opts.per_page : store.state.catalog.per_page;
       let request_params = {
         page: store.state.catalog.current_page,
         per_page: pp,
@@ -310,7 +317,12 @@ const store = createStore({
             if (!response.data.data.length) {
               store.state.catalog.has_products = false;
             } else {
-              store.state.catalog.products.push(...response.data.data);
+              if(opts.add){
+                store.state.catalog.products.push(...response.data.data);
+              }
+              else{
+                store.state.catalog.products = response.data.data;
+              }
               store.state.catalog.current_page++;
             }
           }
