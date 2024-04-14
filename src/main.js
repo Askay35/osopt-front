@@ -182,6 +182,7 @@ const store = createStore({
     },
     selectCategory(state, id) {
       if (state.catalog.current_category != id) {
+        store.commit('resetProducts');
         state.catalog.current_category = id;
         state.catalog.current_subcategory = 0;
         store.dispatch("loadSubcategories", true);
@@ -190,13 +191,15 @@ const store = createStore({
     },
     selectSubcategory(state, id) {
       if (state.catalog.current_subcategory != id) {
+        store.commit('resetProducts');
         state.catalog.current_subcategory = id;
         store.dispatch("loadMoreProducts");
       }
     },
     selectBrand(state, id) {
       if (state.catalog.current_brand != id) {
-        state.catalog.current_subcategory = id;
+        store.commit('resetProducts');
+        state.catalog.current_brand = id;
         store.dispatch("loadMoreProducts");
       }
     },
