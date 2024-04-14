@@ -1,4 +1,4 @@
-import "./assets/css/main.css";
+import "./assets/css/base.css";
 
 import { createApp } from "vue";
 import App from "./App.vue";
@@ -236,6 +236,7 @@ const store = createStore({
     },
     async loadCatalog() {
       await this.dispatch("loadCategories");
+      await this.dispatch("loadBrands");
     },
     createOrder() {
       let order_data = {

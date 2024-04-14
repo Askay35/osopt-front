@@ -44,6 +44,7 @@ export default {
       "addToCart",
       "selectSorting",
       "selectSubcategory",
+      "selectBrand",
       "selectCategory",
     ]),
     isScrolledToBottomHalf() {
@@ -100,7 +101,7 @@ export default {
 <template>
   <div class="catalog-wrapper">
     <ScrollTopBtn />
-    <div class="catalog-categories mb-3">
+    <div class="catalog-filter-items mb-3">
       <div
         @click="selectCategory(-1)"
         class="catalog-category"
@@ -119,13 +120,13 @@ export default {
       </div>
     </div>
     <template v-if="getCurrentSubcategories.length > 0">
-      <div class="catalog-subcategories">
+      <div class="catalog-filter-items">
         <template
           v-for="subcategory in getCurrentSubcategories"
           :key="subcategory.id"
         >
           <div
-            @click="selectSubcategory(subcategory.id, subcategory.name)"
+            @click="selectSubcategory(subcategory.id)"
             class="catalog-category catalog-subcategory"
             :class="{ active: catalog.current_subcategory == subcategory.id }"
           >
@@ -134,9 +135,26 @@ export default {
         </template>
       </div>
     </template>
+    <template v-if="$store.state.catalog.brands.length > 0">
+      <div class="catalog-filter-items catalog-brands items-center">
+        <div class="font-semibold">Бренд</div>
+        <template
+          v-for="brand in $store.state.catalog.brands"
+          :key="brand.id"
+        >
+          <div
+            @click="selectBrand(brand.id)"
+            class="catalog-category"
+            :class="{ active: catalog.current_brand == brand.id }"
+          >
+            {{ brand.name }}
+          </div>
+        </template>
+      </div>
+    </template>
     <div class="d-flex align-items-center mt-3">
       <div
-        class="user-select-none catalog-sorting d-flex flex-column flex-sm-row align-items-sm-center fw-bolder"
+        class="user-select-none catalog-sorting d-flex flex-column flex-sm-row align-items-sm-center font-semibold"
       >
         Сортировать по:
         <VueSelect
@@ -226,8 +244,12 @@ export default {
     }
   }
 }
-.catalog-categories,
-.catalog-subcategories {
+.catalog-brands{
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid $ui-border-color;
+}
+.catalog-filter-items {
   display: flex;
   overflow: scroll;
   scrollbar-width: 0;
