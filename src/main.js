@@ -7,16 +7,16 @@ import axios from "axios";
 import { createStore } from "vuex";
 
 const axios_instance = axios.create({
-  baseURL: "https://api.os-opt.ru/api/",
-  // baseURL: "http://localhost:8000/api/",
+  // baseURL: "https://api.os-opt.ru/api/",
+  baseURL: "http://localhost:8000/api/",
 });
 window.axios = axios_instance;
 
 const store = createStore({
   state() {
     return {
-      // backend_url: "http://storage.os-opt.ru",
-      storage_url: "https://storage.os-opt.ru",
+      storage_url: "http://localhost:8080",
+      // storage_url: "https://storage.os-opt.ru",
       cart: [],
       order: {
         phone: "",
@@ -36,8 +36,10 @@ const store = createStore({
         products: [],
         categories: [],
         subcategories: [],
+        brands: [],
         current_category: -1,
         current_subcategory: 0,
+        current_brand: 0,
         current_sorting: 1,
         current_page: 1,
         has_products: true,
@@ -52,7 +54,7 @@ const store = createStore({
     getCartPrice(state) {
       return state.cart
         .reduce((acc, i) => {
-          if(i.package){
+          if (i.package) {
             return acc + i.price * i.product_count * i.count;
           }
           return acc + i.price * i.product_count;
@@ -68,18 +70,16 @@ const store = createStore({
       return 0;
     },
     getCategoryName: (state) => (id) => {
-      for (const category of state.catalog.categories) {
-        if (category.id === id) {
-          return category.name;
-        }
+      let category = state.catalog.categories.find((c) => c.id === id);
+      if (category) {
+        return category.name;
       }
       return "Нет категории";
     },
     getSubcategoryName: (state) => (id) => {
-      for (const subcategory of state.catalog.subcategories) {
-        if (subcategory.id === id) {
-          return subcategory.name;
-        }
+      let subcategory = state.catalog.subcategories.find((s) => s.id === id);
+      if (subcategory) {
+        return subcategory.name;
       }
       return "Нет подкатегории";
     },
@@ -90,6 +90,13 @@ const store = createStore({
       return state.catalog.subcategories.filter(
         (i) => i.category_id === state.catalog.current_category
       );
+    },
+    getBrandName: (state) => (id) => {
+      let brand = state.catalog.brands.find((b) => b.id === id);
+      if (brand) {
+        return brand.name;
+      }
+      return "Нет бренда";
     },
   },
   mutations: {
@@ -175,15 +182,20 @@ const store = createStore({
     },
     selectCategory(state, id) {
       if (state.catalog.current_category != id) {
-        store.commit("resetProducts");
         state.catalog.current_category = id;
         state.catalog.current_subcategory = 0;
+        store.dispatch("loadSubcategories", true);
         store.dispatch("loadMoreProducts");
       }
     },
     selectSubcategory(state, id) {
       if (state.catalog.current_subcategory != id) {
-        store.commit("resetProducts");
+        state.catalog.current_subcategory = id;
+        store.dispatch("loadMoreProducts");
+      }
+    },
+    selectBrand(state, id) {
+      if (state.catalog.current_brand != id) {
         state.catalog.current_subcategory = id;
         store.dispatch("loadMoreProducts");
       }
@@ -191,32 +203,35 @@ const store = createStore({
   },
   actions: {
     loadCategories() {
-      return window.axios
-        .get("categories")
-        .then(function (response) {
-          if (response.data.status) {
-            store.state.catalog.categories = response.data.data;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      return window.axios.get("categories").then(function (response) {
+        if (response.data.status) {
+          store.state.catalog.categories = response.data.data;
+        }
+      });
     },
-    loadSubcategories() {
+    loadBrands() {
+      return window.axios.get("brands").then(function (response) {
+        if (response.data.status) {
+          store.state.catalog.brands = response.data.data;
+        }
+      });
+    },
+    loadSubcategories(state, current = false) {
+      let payload = {};
+      if (current) {
+        payload.params = { category_id: store.state.catalog.current_category };
+      }
       return window.axios
-        .get("subcategories")
+        .get("subcategories", payload)
         .then(function (response) {
           if (response.data.status) {
+            console.log(response.data.data);
             store.state.catalog.subcategories = response.data.data;
           }
-        })
-        .catch(function (error) {
-          console.log(error);
         });
     },
     async loadCatalog() {
       await this.dispatch("loadCategories");
-      await this.dispatch("loadSubcategories");
     },
     createOrder() {
       let order_data = {
@@ -231,7 +246,7 @@ const store = createStore({
         if (response.data.status) {
           store.state.cart = [];
           localStorage.removeItem("osopt_cart");
-          alert("Заказ совершен");
+          alert("Заказ совершен, мы свяжемся с вами в ближайшее время");
         } else {
           alert("Не удалось совершить заказ");
         }
