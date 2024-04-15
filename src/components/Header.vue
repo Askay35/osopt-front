@@ -95,7 +95,10 @@ export default {
         placeholder="Найти товар"
         @focusin="floating_search_active = true"
         @focusout="floatingSearchFocusOut"
-        @keydown.enter="search($event.target.value);floatingSearchFocusOut()"
+        @keydown.enter="
+          search($event.target.value);
+          floatingSearchFocusOut();
+        "
         @click="searchInput($event.target.value)"
         @input="searchInput($event.target.value)"
       />
@@ -154,7 +157,10 @@ export default {
             placeholder="Найти товар"
             @focusin="search_active = true"
             @focusout="searchFocusOut"
-            @keydown.enter="search($event.target.value);searchFocusOut()"
+            @keydown.enter="
+              search($event.target.value);
+              searchFocusOut();
+            "
             @click="searchInput($event.target.value)"
             @input="searchInput($event.target.value)"
           />
@@ -196,7 +202,9 @@ export default {
           </RouterLink>
         </div>
       </div>
-      <div class="header-search header-search-mobile relative flex-grow max-w-full flex-1 flex md:hidden me-0">
+      <div
+        class="header-search header-search-mobile relative flex-grow max-w-full flex-1 flex md:hidden me-0"
+      >
         <input
           type="text"
           class="block form-input appearance-none w-full bg-white border rounded-full search-input"
@@ -204,7 +212,10 @@ export default {
           placeholder="Найти товар"
           @focusin="search_active = true"
           @focusout="searchFocusOut"
-          @keydown.enter="search($event.target.value);searchFocusOut()"
+          @keydown.enter="
+            search($event.target.value);
+            searchFocusOut();
+          "
           @click="searchInput($event.target.value)"
           @input="searchInput($event.target.value)"
         />
@@ -286,7 +297,7 @@ export default {
     color: $orange-color;
   }
 }
-.header-right{
+.header-right {
   height: 55px;
   gap: 5px;
 }
@@ -375,10 +386,13 @@ header {
     .header-search {
       display: none;
     }
-    right:auto;
-    left:25px;
-    top:auto;
-    bottom:25px;
+    top: auto;
+    bottom: 25px;
+    right: -200px;
+    &.active {
+      transform: translateX(50%);
+      right: 50%;
+    }
   }
 }
 @media (max-width: 440px) {

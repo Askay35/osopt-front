@@ -116,7 +116,7 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col pb-5">
+  <div class="flex flex-col pb-10">
     <template v-if="cart.length > 0">
       <div class="flex flex-wrap flex justify-between cart-header">
         <div
@@ -325,7 +325,7 @@ export default {
         </div>
       </div>
       <div
-        class="flex flex-wrap mt-5 flex cart-bottom-btns justify-between flex-col-reverse sm:flex-row gap-3 sm:gap-0"
+        class="flex flex-wrap mt-5 mb-20 md:mb-0 flex cart-bottom-btns justify-between flex-col-reverse sm:flex-row gap-3 sm:gap-0"
       >
         <RouterLink to="/" class="outline-secondary button big-btn">
           Вернуться назад

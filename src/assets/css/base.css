@@ -993,6 +993,10 @@ video {
   margin-top: 1.25rem
 }
 
+.mb-20{
+  margin-bottom: 5rem
+}
+
 .block{
   display: block
 }
@@ -1172,8 +1176,8 @@ video {
   padding-bottom: 1.5rem
 }
 
-.pb-5{
-  padding-bottom: 1.25rem
+.pb-10{
+  padding-bottom: 2.5rem
 }
 
 .pe-0{
@@ -1575,6 +1579,10 @@ input[type=number] {
 @media (min-width: 768px){
   .md\:me-4{
     margin-inline-end: 1rem
+  }
+
+  .md\:mb-0{
+    margin-bottom: 0px
   }
 
   .md\:flex{

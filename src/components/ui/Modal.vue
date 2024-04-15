@@ -61,11 +61,11 @@ export default {
 @import "@/assets/css/variables.scss";
 
 #modal-bg {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   opacity: 0;
   background: #000000a9;
   z-index: 1001;
@@ -79,12 +79,14 @@ export default {
   top: 40%;
   left: 50%;
   transform: translateX(-50%);
-  opacity: 0.0;
+  opacity: 0;
   z-index: 1050;
   min-width: 500px;
-  transition: opacity .2s ease top .15s ease;
+  visibility: hidden;
+  transition: opacity 0.2s ease top 0.15s ease;
   &.active {
-    opacity: 1.0;
+    opacity: 1;
+    visibility: visible;
     top: 25%;
   }
 
