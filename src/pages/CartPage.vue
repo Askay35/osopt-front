@@ -484,11 +484,11 @@ export default {
   max-height: 400px;
   overflow-y: scroll;
   border-bottom: 1px solid $ui-border-color;
-  scrollbar-width: 1px;
-  scrollbar-color: $orange-color;
-  &::-webkit-scrollbar {
-    background: #FE5F1E;
-  }
+  // scrollbar-width: 1px;
+  // scrollbar-color: $orange-color;
+  // &::-webkit-scrollbar {
+  //   background: #FE5F1E;
+  // }
 }
 
 .cart-item-left {

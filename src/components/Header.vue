@@ -375,6 +375,10 @@ header {
     .header-search {
       display: none;
     }
+    right:auto;
+    left:25px;
+    top:auto;
+    bottom:25px;
   }
 }
 @media (max-width: 440px) {

@@ -7,16 +7,16 @@ import axios from "axios";
 import { createStore } from "vuex";
 
 const axios_instance = axios.create({
-  // baseURL: "https://api.os-opt.ru/api/",
-  baseURL: "http://localhost:8000/api/",
+  baseURL: "https://api.os-opt.ru/api/",
+  // baseURL: "http://localhost:8000/api/",
 });
 window.axios = axios_instance;
 
 const store = createStore({
   state() {
     return {
-      storage_url: "http://localhost:8080",
-      // storage_url: "https://storage.os-opt.ru",
+      // storage_url: "http://localhost:8080",
+      storage_url: "https://storage.os-opt.ru",
       cart: [],
       order: {
         phone: "",
