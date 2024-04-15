@@ -10,11 +10,12 @@
 <script>
 export default {
   props: ["modelValue"],
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue","stateChanged"],
   methods: {
     changeState(e) {
       this.checked = !this.checked;
       this.$emit("update:modelValue", this.checked);
+      this.$emit("stateChanged");
     },
   },
   created(){
@@ -40,7 +41,7 @@ export default {
   justify-content: center;
   &.checked {
     .checkbox-circle {
-      background: $default-bg-color !important;
+      background: $orange-color !important;
     }
   }
 }

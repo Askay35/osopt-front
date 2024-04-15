@@ -1,29 +1,43 @@
 <template>
   <div class="catalog-product-item">
     <div class="catalog-product-item-inner">
-      <div class="catalog-product-image"><img :src="$store.state.storage_url+product.image" loading="lazy" :alt="product.name" /></div>
-      <p class="catalog-product-name">
-        {{ product.name }}
-      </p>
-      <div class="flex mt-auto flex-col">
-        <div class="flex flex-col">
-          <div class="catalog-product-attribute"><div class="text-gray-600">В упаковке: </div><div class="catalog-product-attribute__value">{{ product.count ? product.count + " шт." : "Не указано" }}</div></div>
+      <div class="flex flex-col">
+        <div class="catalog-product-image">
+          <img
+            :src="$store.state.storage_url + product.image"
+            loading="lazy"
+            :alt="product.name"
+          />
         </div>
-        <div class="catalog-product-price">{{ product.price }} ₽</div>
-        <div class="catalog-product-bottom">
-          <OutlineOrangeBtn
-            class="catalog-product-remove"
-            v-if="in_cart"
-            @click="removeProductFromCart(product.id)"
-            ><IconMinus
-          /></OutlineOrangeBtn>
-          <OutlineOrangeBtn
-            class="catalog-product-add"
-            @click="addClick"
-            :class="{ active: in_cart}"
-            ><IconPlus v-if="!in_cart"/><IconCart v-else />{{in_cart ? "В корзину": "Добавить"}}
-            </OutlineOrangeBtn
-          >
+        <p class="catalog-product-name">
+          {{ product.name }}
+        </p>
+        <div class="catalog-product-attribute">
+          <div class="text-gray-600">В упаковке:</div>
+          <div class="catalog-product-attribute__value">
+            {{ product.count ? product.count + " шт." : "Не указано" }}
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col justify-between">
+        <div class="flex flex-col">
+          <div class="catalog-product-price">{{ product.price }} ₽</div>
+          <div class="catalog-product-bottom">
+            <OutlineOrangeBtn
+              class="catalog-product-remove"
+              v-if="in_cart"
+              @click="removeProductFromCart(product.id)"
+              ><IconMinus
+            /></OutlineOrangeBtn>
+            <OutlineOrangeBtn
+              class="catalog-product-add"
+              @click="addClick"
+              :class="{ active: in_cart }"
+              ><IconPlus v-if="!in_cart" /><IconCart v-else />{{
+                in_cart ? "В корзину" : "Добавить"
+              }}
+            </OutlineOrangeBtn>
+          </div>
         </div>
       </div>
     </div>
@@ -43,22 +57,22 @@ export default {
   },
   methods: {
     ...mapMutations(["addToCart", "removeProductFromCart"]),
-    ...mapGetters(["getCartProductCount","getSubcategoryName"]),
-    addClick(){
-      if(!this.in_cart){
-        console.log(this.product);
-        this.product.subcategory = this.getSubcategoryName()(this.product.subcategory_id);
+    ...mapGetters(["getCartProductCount", "getSubcategoryName"]),
+    addClick() {
+      if (!this.in_cart) {
+        this.product.subcategory = this.getSubcategoryName()(
+          this.product.subcategory_id
+        );
         this.addToCart(this.product);
+      } else {
+        this.$router.push({ name: "cart" });
       }
-      else{
-        this.$router.push({name:'cart'});
-      }
-    }
+    },
   },
-  computed:{
-    in_cart(){
+  computed: {
+    in_cart() {
       return this.getCartProductCount()(this.product.id) > 0;
-    }
+    },
   },
   components: { OutlineOrangeBtn, IconPlus, IconMinus, IconCart },
 };
@@ -72,7 +86,8 @@ export default {
   padding: 0;
   min-width: 43px;
   svg {
-    width: 15px;
+    width: 11px;
+    height: 3px;
   }
 }
 .catalog-product-btn-count {
@@ -85,7 +100,7 @@ export default {
   background: #fff;
   border-radius: 20px;
 
-  color: $default-bg-color;
+  color: $orange-color;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -94,7 +109,7 @@ export default {
 }
 .catalog-product-name {
   font-weight: bolder;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
   font-size: 18px;
   margin-top: 30px;
   color: $default-text-color;
@@ -113,13 +128,13 @@ export default {
   max-width: 100%;
 
   &.active {
-    background: $default-bg-color;
+    background: $orange-color;
     color: #fff;
     path {
       fill: #fff;
     }
     &:hover {
-      background: $default-hover-bg;
+      background: $orange-hover-color;
     }
   }
   svg {
@@ -128,8 +143,8 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     margin-top: 1px;
-    height: 16px;
-    width: 15px;
+    height: 13px;
+    width: 12px;
   }
 }
 .catalog-product-item-inner {
@@ -137,6 +152,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   .orange-outline-btn {
     height: 43px;
     justify-content: center;
@@ -156,9 +172,9 @@ export default {
   height: 200px;
 }
 .catalog-product-price {
-  color: $default-bg-color;
+  color: $orange-color;
   font-size: 24px;
   font-weight: 700;
-  margin-top: 5px;
+  margin-top: 20px;
 }
 </style>

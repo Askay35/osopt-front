@@ -90,12 +90,12 @@ export default {
     <div class="header-search w-1/3 ms-auto">
       <input
         type="text"
-        class="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded search-input"
+        class="block form-input appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded search-input"
         :value="search_query"
         placeholder="Найти товар"
         @focusin="floating_search_active = true"
         @focusout="floatingSearchFocusOut"
-        @keydown.enter="search($event.target.value)"
+        @keydown.enter="search($event.target.value);floatingSearchFocusOut()"
         @click="searchInput($event.target.value)"
         @input="searchInput($event.target.value)"
       />
@@ -138,7 +138,7 @@ export default {
   </div>
 
   <header>
-    <div class="lg:container px-6 md:px-20 mx-auto flex-col flex">
+    <div class="lg:container px-6 xl:px-20 mx-auto flex-col flex">
       <div class="flex items-center justify-between">
         <RouterLink :to="{ name: 'home' }" class="header-left flex">
           <div class="header-left-info flex flex-col">
@@ -149,12 +149,12 @@ export default {
         <div class="header-search me-3 w-1/3 ms-auto hidden md:flex">
           <input
             type="text"
-            class="block appearance-none w-full py-1 px-2 bg-white text-gray-800 border border-gray-200 rounded-full search-input header-search-input"
+            class="block form-input appearance-none w-full py-1 px-2 bg-white text-gray-800 border border-gray-200 rounded-full search-input header-search-input"
             :value="search_query"
             placeholder="Найти товар"
             @focusin="search_active = true"
             @focusout="searchFocusOut"
-            @keydown.enter="search($event.target.value)"
+            @keydown.enter="search($event.target.value);searchFocusOut()"
             @click="searchInput($event.target.value)"
             @input="searchInput($event.target.value)"
           />
@@ -199,12 +199,12 @@ export default {
       <div class="header-search header-search-mobile relative flex-grow max-w-full flex-1 flex md:hidden me-0">
         <input
           type="text"
-          class="block appearance-none w-full bg-white border rounded-full search-input"
+          class="block form-input appearance-none w-full bg-white border rounded-full search-input"
           :value="search_query"
           placeholder="Найти товар"
           @focusin="search_active = true"
           @focusout="searchFocusOut"
-          @keydown.enter="search($event.target.value)"
+          @keydown.enter="search($event.target.value);searchFocusOut()"
           @click="searchInput($event.target.value)"
           @input="searchInput($event.target.value)"
         />
@@ -283,7 +283,7 @@ export default {
   cursor: pointer;
   &:hover {
     background: $light-hover-bg;
-    color: $default-bg-color;
+    color: $orange-color;
   }
 }
 .header-right{
@@ -332,7 +332,7 @@ export default {
   font-weight: 700;
   cursor: pointer;
   color: #fff;
-  background-color: $default-bg-color;
+  background-color: $orange-color;
 }
 .header-cart-line {
   width: 1px;
@@ -367,7 +367,7 @@ header {
 .header-desc {
   margin: 0;
   line-height: 1em !important;
-  color: $default-bg-color;
+  color: $orange-color;
   font-size: 1rem;
 }
 @media (max-width: 800px) {
@@ -377,7 +377,7 @@ header {
     }
   }
 }
-@media (max-width: 420px) {
+@media (max-width: 440px) {
   .header-title {
     font-size: 1.2rem;
   }

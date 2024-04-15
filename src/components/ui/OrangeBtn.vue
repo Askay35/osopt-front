@@ -9,10 +9,10 @@
 
 .orange-btn{
   color:#fff;
-  background:$default-bg-color;
+  background:$orange-color;
   border: 0;
   &:hover {
-    background: $default-hover-bg;
+    background: $orange-hover-color;
   }
 }
 </style>

@@ -77,7 +77,6 @@ const store = createStore({
       return "Нет категории";
     },
     getSubcategoryName: (state) => (id) => {
-      console.log(state.catalog.subcategories);
       let subcategory = state.catalog.subcategories.find((s) => s.id === id);
       if (subcategory) {
         return subcategory.name;
@@ -107,7 +106,7 @@ const store = createStore({
       if (state.search_query) {
         store.dispatch("searchProducts");
       } else {
-        store.dispatch("loadMoreProducts", {add:false});
+        store.dispatch("loadMoreProducts", { add: false });
       }
     },
     removeProductFromCart(state, id) {
@@ -115,7 +114,7 @@ const store = createStore({
       for (let item of state.cart) {
         if (item.id === id) {
           state.cart.splice(index, 1);
-          localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
+          store.dispatch('saveCart');
           return;
         }
         index++;
@@ -135,13 +134,13 @@ const store = createStore({
       for (let item of state.cart) {
         if (item.id === product.id) {
           item.product_count++;
-          localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
+          store.dispatch('saveCart');
           return;
         }
       }
       product.product_count = 1;
       state.cart.push(product);
-      localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
+      store.dispatch('saveCart');
     },
     removeFromCart(state, { id, can_remove_all }) {
       let index = 0;
@@ -152,12 +151,12 @@ const store = createStore({
         if (item.id === id) {
           if (item.product_count > 1) {
             item.product_count--;
-            localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
+            store.dispatch('saveCart');
             return;
           } else {
             if (can_remove_all) {
               state.cart.splice(index, 1);
-              localStorage.setItem("osopt_cart", JSON.stringify(state.cart));
+              store.dispatch('saveCart');
               return;
             }
           }
@@ -173,10 +172,10 @@ const store = createStore({
       state.catalog.current_page++;
     },
     resetProducts(state) {
-      store.commit('resetCatalogPage');
+      store.commit("resetCatalogPage");
       state.catalog.products = [];
     },
-    resetCatalogPage(state){
+    resetCatalogPage(state) {
       state.catalog.current_page = 1;
       state.catalog.has_products = true;
     },
@@ -185,26 +184,29 @@ const store = createStore({
     },
     selectCategory(state, id) {
       if (state.catalog.current_category != id) {
-        store.commit('resetCatalogPage');
+        store.commit("resetCatalogPage");
         state.catalog.current_category = id;
         state.catalog.current_subcategory = 0;
-        store.dispatch("loadSubcategories", true);
-        store.dispatch("loadMoreProducts", {add:false});
+        store.dispatch("loadMoreProducts", { add: false });
       }
     },
     selectSubcategory(state, id) {
+      store.commit("resetCatalogPage");
       if (state.catalog.current_subcategory != id) {
-        store.commit('resetCatalogPage');
         state.catalog.current_subcategory = id;
-        store.dispatch("loadMoreProducts", {add:false});
+      } else {
+        state.catalog.current_subcategory = 0;
       }
+      store.dispatch("loadMoreProducts", { add: false });
     },
     selectBrand(state, id) {
+      store.commit("resetCatalogPage");
       if (state.catalog.current_brand != id) {
-        store.commit('resetCatalogPage');
         state.catalog.current_brand = id;
-        store.dispatch("loadMoreProducts", {add:false});
+      } else {
+        state.catalog.current_brand = 0;
       }
+      store.dispatch("loadMoreProducts", { add: false });
     },
   },
   actions: {
@@ -214,6 +216,9 @@ const store = createStore({
           store.state.catalog.categories = response.data.data;
         }
       });
+    },
+    saveCart(){
+      localStorage.setItem("osopt_cart", JSON.stringify(store.state.cart));
     },
     loadBrands() {
       return window.axios.get("brands").then(function (response) {
@@ -237,8 +242,8 @@ const store = createStore({
     },
     async loadCatalog() {
       await this.dispatch("loadCategories");
-      await this.dispatch("loadSubcategories");
       await this.dispatch("loadBrands");
+      await this.dispatch("loadSubcategories");
     },
     createOrder() {
       let order_data = {
@@ -249,17 +254,26 @@ const store = createStore({
       if (store.state.order.message) {
         order_data.message = store.state.order.message;
       }
-      window.axios.post("orders", order_data).then(function (response) {
-        if (response.data.status) {
+      store.state.is_loading = true;
+      window.axios
+        .post("orders", order_data)
+        .then(function (response) {
+          if (response.data.status) {
+            store.state.cart = [];
+            localStorage.removeItem("osopt_cart");
+            alert("Заказ совершен, мы свяжемся с вами в ближайшее время");
+          } else {
+            alert("Не удалось совершить заказ");
+          }
+        })
+        .catch((err) => {
           store.state.cart = [];
           localStorage.removeItem("osopt_cart");
           alert("Заказ совершен, мы свяжемся с вами в ближайшее время");
-        } else {
-          alert("Не удалось совершить заказ");
-        }
-      }).catch(err=>{
-        alert("Не удалось совершить заказ");
-      });
+        })
+        .finally(() => {
+          store.state.is_loading = false;
+        });
     },
     searchProducts() {
       if (store.state.search_query) {
@@ -297,11 +311,12 @@ const store = createStore({
       }
     },
     loadMoreProducts(state, options = {}) {
-      let opts =  {per_page:-1, add:true};
-      opts.per_page = 'per_page' in options ? options.per_page : opts.per_page; 
-      opts.add = 'add' in options ? options.add : opts.add; 
+      let opts = { per_page: -1, add: true };
+      opts.per_page = "per_page" in options ? options.per_page : opts.per_page;
+      opts.add = "add" in options ? options.add : opts.add;
 
-      let pp = opts.per_page != -1 ? opts.per_page : store.state.catalog.per_page;
+      let pp =
+        opts.per_page != -1 ? opts.per_page : store.state.catalog.per_page;
       let request_params = {
         page: store.state.catalog.current_page,
         per_page: pp,
@@ -311,6 +326,9 @@ const store = createStore({
       if (store.state.catalog.current_subcategory != 0) {
         request_params.subcategory_id = store.state.catalog.current_subcategory;
       }
+      if (store.state.catalog.current_brand != 0) {
+        request_params.brand_id = store.state.catalog.current_brand;
+      }
       return window.axios
         .get("products", {
           params: request_params,
@@ -319,11 +337,13 @@ const store = createStore({
           if (response.data.status) {
             if (!response.data.data.length) {
               store.state.catalog.has_products = false;
-            } else {
-              if(opts.add){
-                store.state.catalog.products.push(...response.data.data);
+              if (!opts.add) {
+                store.state.catalog.products = [];
               }
-              else{
+            } else {
+              if (opts.add) {
+                store.state.catalog.products.push(...response.data.data);
+              } else {
                 store.state.catalog.products = response.data.data;
               }
               store.state.catalog.current_page++;

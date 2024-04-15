@@ -1,17 +1,34 @@
 @import "variables.scss";
 
-input:focus {
+.form-input:focus {
   box-shadow: none;
   color: $default-text-color !important;
-  border: 1px solid $default-bg-color !important;
+  border: 1px solid $orange-color !important;
 }
-input {
-  border-radius: 50px !important;
+.form-input {
+  border-radius: 30px !important;
   border-color: $ui-border-color;
+  border-width: 1px;
+
+
+  display: block;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: $default-text-color;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-clip: padding-box;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
   &:focus-visible{
     outline: none!important;
   }
 }
-textarea {
+textarea.form-input {
+  resize: vertical; 
+  min-height: calc(1.5em + .75rem + calc(var(--bs-border-width) * 2));
   border-radius: 10px !important;
 }

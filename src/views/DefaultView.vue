@@ -17,7 +17,7 @@ import { mapState } from 'vuex';
 <template>
   <Header></Header>
   <Loading v-model:active="is_loading" color="#FE5F1E" />
-  <main class="lg:container px-6 md:px-20 mx-auto">
+  <main class="lg:container px-6 xl:px-20 mx-auto">
     <RouterView />
   </main>
 </template>

@@ -4,11 +4,11 @@
 @import "reset.scss";
 @import "vue-select/dist/vue-select.css";
 
+
 a {
   text-decoration: none;
   color: $default-text-color;
 }
-
 #app {
   margin: 0 auto;
 }
@@ -16,13 +16,13 @@ a {
   transition: all 0.2s ease;
 }
 .text-orange {
-  color: $default-bg-color;
+  color: $orange-color;
 }
 .text-secondary {
   color: $secondary-text-color;
 }
-.text-light-orange{
-  color:$light-orange-color;
+.text-light-orange {
+  color: $light-orange-color;
 }
 body {
   background: $body-bg;
@@ -36,25 +36,28 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  &.modal-open{
+    overflow: hidden;
+  }
 }
 .dark-btn {
   background: $dark-bg-color;
   border: 0;
   color: #fff;
   &:hover {
-    background: $default-bg-color;
+    background: $orange-color;
   }
 }
 .custom-select {
   background: none;
   border: none;
   cursor: pointer;
-  color: $default-bg-color;
-  border-bottom: 1px dotted $default-bg-color;
+  color: $orange-color;
+  border-bottom: 1px dotted $orange-color;
   option {
     color: #000;
     &:hover {
-      color: $default-bg-color;
+      color: $orange-color;
     }
   }
 }
@@ -87,33 +90,33 @@ svg {
   padding: 20px 30px;
 }
 .outline-orange {
-  border: 1px solid $default-bg-color;
+  border: 1px solid $orange-color;
 }
 .outline-secondary {
   border: 1px solid #d0d0d0;
   color: #d0d0d0;
 }
-
-.catalog-product-attribute{
-  display: flex;
-  margin-bottom:10px;
-  gap:5px;
-  color:$default-text-color;
+.default-border{
+  border-color: $ui-border-color;
+  border-style: solid;
 }
-.catalog-product-attribute__value{
-  color:$light-orange-color;
+.catalog-product-attribute {
+  display: flex;
+  text-wrap: nowrap;
+  gap: 5px;
+  color: $default-text-color;
+}
+.catalog-product-attribute__value {
+  color: $light-orange-color;
   font-weight: 600;
 }
-
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none!important;
-  margin: 0!important;
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield!important;
+input[type="number"] {
+  -moz-appearance: textfield !important;
 }
 .vs__actions {
   display: none;
@@ -124,32 +127,62 @@ input[type=number] {
 }
 .vs__dropdown-option--highlight {
   background: #fe5d1e10;
-  color: $default-bg-color;
+  color: $orange-color;
 }
-.vs__dropdown-toggle {
-  border: 1px solid #d0d0d0;
-
-}
-.v-select{
+.v-select {
   min-width: 210px;
   max-width: 210px;
+}
+.vs__dropdown-toggle{
+  border: 1px solid $ui-border-color;
 }
 .v-select.catalog-sorting-select {
   .vs__dropdown-toggle {
     border: 0;
   }
   .vs__selected {
-    color: $default-bg-color;
+    color: $orange-color;
     border: 0;
     padding-left: 0;
-    border-bottom: 2px dotted $default-bg-color !important;
+    border-bottom: 2px dotted $orange-color !important;
   }
   .vs__dropdown-menu {
     margin-top: 5px;
-    box-shadow: $default-shadow;
     border: 0;
   }
   .vs__dropdown-option {
     padding: 5px 10px;
+  }
+}
+@media (min-width: 640px) {
+  .grid-sm-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .grid-sm-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .grid-md-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-md-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .grid-lg-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .grid-lg-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .grid-xl-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .grid-xl-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }

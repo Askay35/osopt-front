@@ -17,15 +17,7 @@ export default {
   },
   computed: {
     catalogClassList() {
-      return "grid-cols-1" +
-        " sm:grid-cols-" +
-        (this.row_items - 3) +
-        " md:grid-cols-" +
-        (this.row_items - 2) +
-        " lg:grid-cols-" +
-        (this.row_items - 1) +
-        " xl:grid-cols-" +
-        this.row_items;
+      return `grid-flow-row grid-rows-1 grid-cols-1 grid-sm-cols-${this.row_items-3} grid-md-cols-${this.row_items-2} grid-lg-cols-${this.row_items-1} grid-xl-cols-${this.row_items}`;
     },
     ...mapState(["catalog", "current_sorting", "sortings"]),
     ...mapGetters(["getCurrentCategory", "getCurrentSubcategories"]),
@@ -102,7 +94,7 @@ export default {
 <template>
   <div class="catalog-wrapper">
     <ScrollTopBtn />
-    <div class="catalog-filter-items mb-3">
+    <div class="catalog-filter-items">
       <div
         @click="selectCategory(-1)"
         class="catalog-category"
@@ -121,7 +113,7 @@ export default {
       </div>
     </div>
     <template v-if="getCurrentSubcategories.length > 0">
-      <div class="catalog-filter-items">
+      <div class="catalog-filter-items mt-3">
         <template
           v-for="subcategory in getCurrentSubcategories"
           :key="subcategory.id"
@@ -137,7 +129,7 @@ export default {
       </div>
     </template>
     <template v-if="$store.state.catalog.brands.length > 0">
-      <div class="catalog-filter-items catalog-brands items-center">
+      <div class="catalog-filter-items catalog-brands py-4 mt-4 default-border border-t">
         <template v-for="brand in $store.state.catalog.brands" :key="brand.id">
           <div
             @click="selectBrand(brand.id)"
@@ -178,7 +170,7 @@ export default {
         ></div>
       </div>
     </div>
-    <div class="catalog-products grid gap-10 gap-y-16 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" >
+    <div class="catalog-products grid gap-5 gap-y-20" :class="catalogClassList" >
       <product
         v-for="(product, index) in catalog.products"
         :key="index"
@@ -214,8 +206,6 @@ export default {
 }
 .catalog-products {
   padding-top: 60px;
-  flex-wrap: wrap;
-  flex-direction: row;
 }
 .catalog-category {
   padding: 10px 30px;
@@ -240,17 +230,11 @@ export default {
     }
   }
 }
-.catalog-brands {
-  padding-top: 1rem;
-  margin-top: 1rem;
-  border-top: 1px solid $ui-border-color;
-}
 .catalog-filter-items {
   display: flex;
   overflow: scroll;
-  scrollbar-width: 0;
   gap: 10px;
-
+  align-items: center;
   -ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar {

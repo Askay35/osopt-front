@@ -8,12 +8,12 @@
 @import "@/assets/css/variables.scss";
 
 .orange-outline-btn {
-  color: $default-bg-color;
-  border: 1px solid $default-bg-color;
+  color: $orange-color;
+  border: 1px solid $orange-color;
   cursor: pointer;
   &:hover{
     color:#fff;
-    background: $default-bg-color;
+    background: $orange-color;
     path{
         fill: #fff;
     }

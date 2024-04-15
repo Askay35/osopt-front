@@ -11,6 +11,7 @@ import OrangeBtn from "@/components/ui/OrangeBtn.vue";
 import VueSelect from "vue-select";
 import Checkbox from "@/components/ui/Checkbox.vue";
 import IconPackage from "@/components/icons/IconPackage.vue";
+import Modal from "@/components/ui/Modal.vue";
 
 export default {
   created() {
@@ -32,6 +33,7 @@ export default {
     OrangeBtn,
     OrangeOutlineBtn,
     IconRemove,
+    Modal,
     Checkbox,
     IconPackage,
   },
@@ -108,7 +110,7 @@ export default {
       "addToCart",
       "selectPayType",
     ]),
-    ...mapActions(["createOrder", "loadCatalog"]),
+    ...mapActions(["createOrder", "loadCatalog","saveCart"]),
   },
 };
 </script>
@@ -117,9 +119,11 @@ export default {
   <div class="flex flex-col pb-5">
     <template v-if="cart.length > 0">
       <div class="flex flex-wrap flex justify-between cart-header">
-        <div class="relative flex-grow max-w-full flex-1 px-4 flex items-center ps-0">
+        <div
+          class="relative flex-grow max-w-full flex-1 px-4 flex items-center ps-0"
+        >
           <IconCart color="#3F3F3F" width="25" height="25" />
-          <div class="ms-2 fs-3 font-bold">Корзина</div>
+          <div class="ms-2 text-xl font-bold">Корзина</div>
         </div>
         <div
           class="col-auto items-center pe-0 flex text-gray-600"
@@ -139,13 +143,11 @@ export default {
             <div
               class="w-full md:w-auto cart-item-info justify-content-space-between"
             >
-              <div
-                class="flex flex-col items-end md:items-start"
-              >
+              <div class="flex flex-col items-end md:items-start">
                 <div class="cart-item-name">
                   {{ item.name }}
                 </div>
-                <div class="cart-item-desc mt-1 text-end sm:text-start gap-4">
+                <div class="cart-item-desc mt-2 text-end md:text-start">
                   {{ getCategoryName(item.category_id)
                   }}<br class="block sm:hidden" /><span
                     class="hidden sm:inline"
@@ -154,6 +156,7 @@ export default {
                   >
                   {{ item.subcategory }}
                   <br />
+
                   <div class="catalog-product-attribute">
                     <div class="text-gray-600">В упаковке:</div>
                     <div class="catalog-product-attribute__value">
@@ -172,7 +175,9 @@ export default {
                   ₽
                 </div>
               </div>
-              <div class="cart-item-right cart-item-mob-btns flex flex-col md:hidden">
+              <div
+                class="cart-item-right cart-item-mob-btns flex flex-col md:hidden"
+              >
                 <div
                   class="cart-item-btns justify-end md:justify-center order-3 md:order-0"
                 >
@@ -217,13 +222,18 @@ export default {
                 <div class="flex justify-between w-full">
                   <div
                     @click="removeProductFromCart(item.id)"
+                    :class="{ 'ms-auto': !item.count }"
                     class="outline-secondary cart-item-remove me-0 md:me-4 order-0 button circle-btn"
                   >
                     <icon-remove />
                   </div>
-                  <Checkbox v-if="item.count" class="flex-row-reverse" v-model="item.package"
-                    ><IconPackage color="#ff7b47" /></Checkbox
-                  >
+                  <Checkbox
+                    v-if="item.count"
+                    class="flex-row-reverse"
+                    v-model="item.package"
+                    @state-changed="saveCart"
+                    ><IconPackage color="#ff7b47"
+                  /></Checkbox>
                 </div>
               </div>
             </div>
@@ -278,9 +288,13 @@ export default {
               }}
               ₽
             </div>
-            <Checkbox v-if="item.count" class="flex-row-reverse" v-model="item.package"
-              ><IconPackage color="#ff7b47" /></Checkbox
-            >
+            <Checkbox
+              v-if="item.count"
+              class="flex-row-reverse"
+              v-model="item.package"
+              @state-changed="saveCart"
+              ><IconPackage color="#ff7b47"
+            /></Checkbox>
             <div
               @click="removeProductFromCart(item.id)"
               class="outline-secondary cart-item-remove me-0 md:me-4 order-3 md:order-0 button circle-btn"
@@ -290,33 +304,35 @@ export default {
           </div>
         </div>
       </div>
-      <div class="flex flex-wrap  mt-4 flex justify-between">
-        <div class="relative flex-grow max-w-full flex-1 px-4 flex items-center">
-          <div class="cart-bottom-info">
+      <div class="flex flex-wrap mt-4 flex justify-between">
+        <div
+          class="relative flex-grow max-w-full flex-1 pr-4 flex items-center"
+        >
+          <div class="cart-bottom-info font-medium">
             Всего товаров:<br class="block sm:hidden" />&nbsp;<span
-              class="font-bold"
+              class="text-xl font-bold"
               >{{ getCartCount }} шт.</span
             >
           </div>
         </div>
         <div class="col-auto items-center">
-          <div class="cart-bottom-info">
+          <div class="cart-bottom-info font-medium">
             Сумма заказа:<br class="block sm:hidden" />&nbsp;
-            <span class="text-orange float-end sm:float-none font-bold"
+            <span class="text-orange float-end sm:float-none text-xl font-bold"
               >{{ getCartPrice }} ₽</span
             >
           </div>
         </div>
       </div>
       <div
-        class="flex flex-wrap  mt-5 flex cart-bottom-btns justify-between flex-col-reverse sm:flex-row gap-2 sm:gap-0"
+        class="flex flex-wrap mt-5 flex cart-bottom-btns justify-between flex-col-reverse sm:flex-row gap-3 sm:gap-0"
       >
         <RouterLink to="/" class="outline-secondary button big-btn">
           Вернуться назад
         </RouterLink>
         <OrangeBtn
-          data-bs-toggle="modal"
-          data-bs-target="#orderModal"
+          data-toggle="modal"
+          data-modal="#orderModal"
           class="col-auto px-5 button big-btn"
         >
           Заказать
@@ -330,71 +346,60 @@ export default {
           Вероятнее всего, Вы ещё не добавили товары в корзину. <br />
           Для того, чтобы это сделать, перейдите на главную страницу.
         </div>
-        <icon-shopping class="mb-5" />
+        <icon-shopping class="mb-10" />
         <RouterLink to="/" class="button dark-btn">Вернуться назад</RouterLink>
       </div>
     </template>
 
-
-    <div
-      class="modal fade"
-      id="orderModal"
-      tabindex="-1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-body">
-            <div>
-              <div class="mb-3">
-                <label for="phone" class="col-form-label"
-                  >Телефон (или другой контакт):</label
-                >
-                <input
-                  type="text"
-                  v-model="order.phone"
-                  required
-                  class="form-control"
-                  id="phone"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="message-text" class="col-form-label"
-                  >Сообщение к заказу (не обязательно):</label
-                >
-                <textarea
-                  v-model="order.message"
-                  maxlength="300"
-                  class="form-control"
-                  id="message-text"
-                ></textarea>
-              </div>
-              <label class="col-form-label">Тип оплаты:</label>
-              <VueSelect
-                v-model="order.current_pay_type"
-                autocomplete="false"
-                :options="order.pay_types"
-                :clearSearchOnSelect="false"
-                :searchable="false"
-                class="mb-3"
-              ></VueSelect>
-            </div>
-            <OrangeBtn
-              @click="createOrder"
-              data-bs-dismiss="modal"
-              class="ms-auto mt-4 px-5"
-              >Заказать</OrangeBtn
-            >
-          </div>
+    <Modal id="orderModal"
+      ><div>
+        <div class="mb-3">
+          <label for="phone">
+            Телефон (или другой контакт):
+          </label>
+          <input
+            type="text"
+            v-model="order.phone"
+            required
+            class="form-input mt-2 w-3/4"
+            id="phone"
+          />
         </div>
+        <div class="mb-3">
+          <label for="message-text" class="col-form-label"
+            >Сообщение к заказу (не обязательно):</label
+          >
+          <textarea
+            v-model="order.message"
+            maxlength="300"
+            class="form-input mt-2 w-3/4"
+            id="message-text"
+          ></textarea>
+        </div>
+        <label class="col-form-label">Тип оплаты:</label>
+        <VueSelect
+          v-model="order.current_pay_type"
+          autocomplete="false"
+          :options="order.pay_types"
+          :clearSearchOnSelect="false"
+          :searchable="false"
+        ></VueSelect>
       </div>
-    </div>
+      <OrangeBtn
+        @click="createOrder"
+        class="modal-close ms-auto mt-4 px-5"
+        >Заказать</OrangeBtn
+      ></Modal
+    >
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/css/variables.scss";
 
+.catalog-product-attribute {
+  margin-top: 5px;
+}
 .cart-item-right {
   justify-content: end;
   align-items: center;
@@ -408,7 +413,7 @@ export default {
   max-width: 150px;
 }
 .cart-item-name {
-  font-weight: 600;
+  font-weight: 700;
   text-align: right;
   font-size: 20px;
 }
@@ -453,7 +458,7 @@ export default {
   align-items: center;
   .orange-outline-btn {
     &:hover {
-      background: $default-bg-color;
+      background: $orange-color;
       path {
         color: #fff;
       }
@@ -480,7 +485,10 @@ export default {
   overflow-y: scroll;
   border-bottom: 1px solid $ui-border-color;
   scrollbar-width: 1px;
-  scrollbar-color: $default-bg-color;
+  scrollbar-color: $orange-color;
+  &::-webkit-scrollbar {
+    background: #FE5F1E;
+  }
 }
 
 .cart-item-left {
@@ -491,14 +499,15 @@ export default {
 }
 .cart-item-mob-btns {
   width: auto;
-  gap: 4rem;
+  gap: 1rem 4rem;
 }
 .cart-header {
   padding-bottom: 30px;
 }
 @media (max-width: 768px) {
   .cart-item-image {
-    width: 120px;
+    max-width: 130px;
+    min-width: 130px;
     height: 150px;
   }
   .cart-items {
@@ -516,6 +525,16 @@ export default {
     align-items: flex-start;
     min-height: 170px;
   }
+  .cart-item-price {
+    font-size: 18px;
+  }
+  .cart-item-name {
+    text-align: right;
+    font-size: 16px;
+  }
+  .cart-item-desc {
+    font-size: 14px;
+  }
 }
 .cart-bottom-btns {
   & > .button {
@@ -523,6 +542,10 @@ export default {
   }
 }
 @media (max-width: 575.9px) {
+  .cart-item-btns {
+    justify-content: space-between;
+    min-width: 120px;
+  }
   .cart-bottom-btns {
     & > .button {
       width: 100%;
