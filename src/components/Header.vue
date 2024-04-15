@@ -388,10 +388,12 @@ header {
     }
     top: auto;
     bottom: 25px;
-    right: -200px;
+    right: auto;
+    left:-200px;
     &.active {
-      transform: translateX(50%);
-      right: 50%;
+      transform: translateX(-50%);
+      right:auto;
+      left: 50%;
     }
   }
 }
