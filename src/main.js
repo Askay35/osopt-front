@@ -77,6 +77,7 @@ const store = createStore({
       return "Нет категории";
     },
     getSubcategoryName: (state) => (id) => {
+      console.log(state.catalog.subcategories);
       let subcategory = state.catalog.subcategories.find((s) => s.id === id);
       if (subcategory) {
         return subcategory.name;
@@ -236,6 +237,7 @@ const store = createStore({
     },
     async loadCatalog() {
       await this.dispatch("loadCategories");
+      await this.dispatch("loadSubcategories");
       await this.dispatch("loadBrands");
     },
     createOrder() {

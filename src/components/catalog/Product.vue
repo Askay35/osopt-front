@@ -13,18 +13,16 @@
         <div class="catalog-product-bottom">
           <OutlineOrangeBtn
             class="catalog-product-remove"
-            v-if="product_count > 0"
-            @click="remFromCart"
+            v-if="in_cart"
+            @click="removeProductFromCart(product.id)"
             ><IconMinus
           /></OutlineOrangeBtn>
           <OutlineOrangeBtn
             class="catalog-product-add"
-            @click="pushToCart"
-            :class="{ active: product_count > 0 }"
-            ><IconPlus />Добавить
-            <div class="catalog-product-btn-count" v-if="product_count > 0">
-              {{ product_count }}
-            </div></OutlineOrangeBtn
+            @click="addClick"
+            :class="{ active: in_cart}"
+            ><IconPlus v-if="!in_cart"/><IconCart v-else />{{in_cart ? "В корзину": "Добавить"}}
+            </OutlineOrangeBtn
           >
         </div>
       </div>
@@ -37,35 +35,32 @@ import { mapGetters, mapMutations } from "vuex";
 import IconPlus from "../icons/IconPlus.vue";
 import IconMinus from "../icons/IconMinus.vue";
 import OutlineOrangeBtn from "../ui/OrangeOutlineBtn.vue";
+import IconCart from "../icons/IconCart.vue";
 
 export default {
   props: {
     product: Object,
   },
   methods: {
-    ...mapMutations(["addToCart", "removeFromCart"]),
-    ...mapGetters(["getCartProductCount"]),
-    pushToCart() {
-      this.addToCart(this.product);
-      this.product_count = this.getCartProductCount()(this.product.id);
-    },
-    remFromCart() {
-      this.$store.commit("removeFromCart", {
-        id: this.product.id,
-        can_remove_all: true,
-      });
-      this.product_count = this.getCartProductCount()(this.product.id);
-    },
+    ...mapMutations(["addToCart", "removeProductFromCart"]),
+    ...mapGetters(["getCartProductCount","getSubcategoryName"]),
+    addClick(){
+      if(!this.in_cart){
+        console.log(this.product);
+        this.product.subcategory = this.getSubcategoryName()(this.product.subcategory_id);
+        this.addToCart(this.product);
+      }
+      else{
+        this.$router.push({name:'cart'});
+      }
+    }
   },
-  data() {
-    return {
-      product_count: 0,
-    };
+  computed:{
+    in_cart(){
+      return this.getCartProductCount()(this.product.id) > 0;
+    }
   },
-  created() {
-    this.product_count = this.getCartProductCount()(this.product.id);
-  },
-  components: { OutlineOrangeBtn, IconPlus, IconMinus },
+  components: { OutlineOrangeBtn, IconPlus, IconMinus, IconCart },
 };
 </script>
 
