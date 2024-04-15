@@ -33,7 +33,7 @@
               class="catalog-product-add"
               @click="addClick"
               :class="{ active: in_cart }"
-              ><IconPlus v-if="!in_cart" /><IconCart v-else />{{
+              ><IconPlus v-if="!in_cart" /><IconCart class="cart-icon" v-else />{{
                 in_cart ? "В корзину" : "Добавить"
               }}
             </OutlineOrangeBtn>
@@ -143,8 +143,10 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     margin-top: 1px;
-    height: 13px;
     width: 12px;
+    &.cart-icon{
+      width: 16px;
+    }
   }
 }
 .catalog-product-item-inner {
