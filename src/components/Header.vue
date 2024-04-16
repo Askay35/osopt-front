@@ -381,6 +381,10 @@ header {
   color: $orange-color;
   font-size: 1rem;
 }
+.header-cart-price{
+  text-wrap:nowrap
+}
+
 @media (max-width: 800px) {
   #floating-header {
     .header-search {
@@ -404,10 +408,10 @@ header {
 }
 @media (max-width: 440px) {
   .header-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   .header-desc {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
 }
 </style>
