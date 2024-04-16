@@ -43,7 +43,7 @@ const store = createStore({
         current_sorting: 1,
         current_page: 1,
         has_products: true,
-        per_page: 20,
+        per_page: 30,
       },
     };
   },

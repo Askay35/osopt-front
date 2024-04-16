@@ -69,7 +69,6 @@ export default {
   opacity: 0;
   background: #000000a9;
   z-index: 1001;
-  cursor: pointer;
   &.active {
     opacity: 1;
   }

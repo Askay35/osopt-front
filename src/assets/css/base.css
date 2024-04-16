@@ -945,6 +945,10 @@ video {
   margin-bottom: 0.5rem
 }
 
+.mb-20{
+  margin-bottom: 5rem
+}
+
 .mb-3{
   margin-bottom: 0.75rem
 }
@@ -993,8 +997,8 @@ video {
   margin-top: 1.25rem
 }
 
-.mb-20{
-  margin-bottom: 5rem
+.mr-2{
+  margin-right: 0.5rem
 }
 
 .block{
@@ -1107,8 +1111,17 @@ video {
   gap: 1.25rem
 }
 
+.gap-2{
+  gap: 0.5rem
+}
+
 .gap-y-20{
   row-gap: 5rem
+}
+
+.gap-x-2{
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem
 }
 
 .rounded{
@@ -1577,12 +1590,12 @@ input[type=number] {
 }
 
 @media (min-width: 768px){
-  .md\:me-4{
-    margin-inline-end: 1rem
-  }
-
   .md\:mb-0{
     margin-bottom: 0px
+  }
+
+  .md\:me-4{
+    margin-inline-end: 1rem
   }
 
   .md\:flex{

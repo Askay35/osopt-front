@@ -86,7 +86,7 @@ export default {
 </script>
 
 <template>
-  <div id="floating-header">
+  <div id="floating-header" class="gap-x-2">
     <div class="header-search w-1/3 ms-auto">
       <input
         type="text"
@@ -141,7 +141,7 @@ export default {
   </div>
 
   <header>
-    <div class="lg:container px-6 xl:px-20 mx-auto flex-col flex">
+    <div class="lg:container px-5 xl:px-20 mx-auto flex-col flex">
       <div class="flex items-center justify-between">
         <RouterLink :to="{ name: 'home' }" class="header-left flex">
           <div class="header-left-info flex flex-col">
@@ -394,6 +394,11 @@ header {
       transform: translateX(-50%);
       right:auto;
       left: 50%;
+    }
+  }
+  header{
+    .header-cart{
+      padding: 10px 20px;
     }
   }
 }
